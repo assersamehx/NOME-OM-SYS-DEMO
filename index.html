@@ -1,0 +1,2554 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NUMI - Operations Executive Suite • Premium Analytics V4.7 Filled Data Main Tree</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- FontAwesome 6 Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* Custom Apple-inspired Minimalist Scrollbars */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.16); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.28); }
+    .dark ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); }
+    .dark ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.35); }
+
+    /* Apple Liquid Glass Top Floating Bar */
+    .liquid-glass {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(28px) saturate(200%);
+      -webkit-backdrop-filter: blur(28px) saturate(200%);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+    .dark .liquid-glass {
+      background: rgba(15, 18, 26, 0.82);
+      backdrop-filter: blur(28px) saturate(190%);
+      -webkit-backdrop-filter: blur(28px) saturate(190%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    /* Minimalist Apple Glass Cards */
+    .apple-card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(0, 0, 0, 0.07);
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.02);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .dark .apple-card {
+      background: rgba(18, 22, 31, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: 0 8px 30px -8px rgba(0, 0, 0, 0.4);
+    }
+    .apple-card-hover:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.08);
+      border-color: rgba(0, 113, 227, 0.35);
+    }
+    .dark .apple-card-hover:hover {
+      box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.6);
+      border-color: rgba(56, 189, 248, 0.35);
+    }
+
+    /* Subtle Pulse Animation */
+    @keyframes pulseSoft {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+    .pulse-indicator { animation: pulseSoft 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+    /* Canvas Grid Background */
+    .tree-grid-bg {
+      background-color: #f8fafc;
+      background-image: radial-gradient(circle, rgba(0, 0, 0, 0.07) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+    .dark .tree-grid-bg {
+      background-color: #0b0e14;
+      background-image: radial-gradient(circle, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+    }
+
+    /* Print-Ready PDF Styles */
+    @media print {
+      body { background-color: #ffffff !important; color: #000000 !important; }
+      header, .no-print, #toast-container { display: none !important; }
+      .apple-card { background: #ffffff !important; border: 1px solid #e2e8f0 !important; box-shadow: none !important; color: #000 !important; }
+      * { color: #000000 !important; }
+      #screen-overview, #screen-tickets, #screen-tree { display: block !important; }
+    }
+
+    /* V3 Liquid Glass refinement: same visual language, more depth, motion, and restraint */
+    :root{--glass-edge:rgba(255,255,255,.82);--glass-blue:#0a84ff;--glass-cyan:#5ac8fa;--glass-violet:#7c6cff}
+    body{background:
+      radial-gradient(circle at 8% 12%,rgba(90,200,250,.16),transparent 26%),
+      radial-gradient(circle at 92% 8%,rgba(124,108,255,.12),transparent 28%),
+      linear-gradient(180deg,#f7f8fb 0%,#eef2f8 100%)!important;background-attachment:fixed}
+    .dark body{background:radial-gradient(circle at 12% 5%,rgba(10,132,255,.14),transparent 27%),radial-gradient(circle at 88% 10%,rgba(94,92,230,.12),transparent 25%),#07090d!important}
+    .liquid-glass{background:linear-gradient(135deg,rgba(255,255,255,.74),rgba(255,255,255,.50));border-color:rgba(255,255,255,.84);box-shadow:0 18px 55px rgba(33,46,72,.10),inset 0 1px 0 var(--glass-edge);backdrop-filter:blur(34px) saturate(180%)}
+    .apple-card{background:linear-gradient(145deg,rgba(255,255,255,.88),rgba(255,255,255,.68));border:1px solid rgba(255,255,255,.86);box-shadow:0 18px 44px rgba(33,46,72,.07),inset 0 1px 0 rgba(255,255,255,.95);backdrop-filter:blur(28px) saturate(150%)}
+    .dark .apple-card{background:linear-gradient(145deg,rgba(22,27,39,.78),rgba(10,13,20,.70));box-shadow:0 18px 46px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.08)}
+    .apple-card-hover{will-change:transform,box-shadow}.apple-card-hover:hover{transform:translateY(-3px) scale(1.006);box-shadow:0 24px 48px rgba(24,39,75,.11);border-color:rgba(10,132,255,.22)}
+    .screen-panel{animation:screenIn .42s cubic-bezier(.2,.8,.2,1)}
+    @keyframes screenIn{from{opacity:0;transform:translateY(8px) scale(.993)}to{opacity:1;transform:none}}
+    #tree-container{transition:transform .12s cubic-bezier(.2,.8,.2,1)!important}
+    #tree-viewport{box-shadow:inset 0 1px 0 rgba(255,255,255,.72),0 22px 60px rgba(24,39,75,.08)}
+    button{transition:transform .16s ease,box-shadow .16s ease,background .16s ease}button:active{transform:scale(.965)}
+    canvas{filter:saturate(.92)}
+    @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+    @media (max-width:720px){header{padding-left:8px!important;padding-right:8px!important}.liquid-glass{border-radius:22px!important}.screen-panel{padding-bottom:90px}}
+  
+/* Premium Analytics V4.3 Taskbar Fix: NUMI + chart motion + ticket quality, never remove */
+.report-host{position:relative}.numi-dot{position:absolute;left:18px;top:18px;z-index:40;width:13px;height:13px;border:0;border-radius:50%;padding:0;background:#6bcaf2;box-shadow:0 3px 11px rgba(42,143,190,.3);cursor:pointer;transition:width .32s cubic-bezier(.2,.9,.2,1),height .32s cubic-bezier(.2,.9,.2,1),transform .2s}.numi-dot.face{width:39px;height:39px;box-shadow:0 12px 26px rgba(42,143,190,.28),inset 0 -8px 12px rgba(20,99,138,.23)}.numi-dot span{position:absolute;opacity:0;transition:.16s}.numi-dot.face span{opacity:1}.numi-dot .eye{top:13px;width:4px;height:7px;border-radius:50%;background:#185d80}.numi-dot .l{left:11px}.numi-dot .r{right:11px}.numi-dot .smile{left:11px;top:24px;width:17px;height:8px;border-bottom:2px solid #185d80;border-radius:0 0 50% 50%}.numi-dot.face:hover .eye{transform:translateX(1.5px)}.numi-box{display:none;position:absolute;left:66px;top:15px;z-index:39;width:min(330px,72vw);padding:10px 12px;border-radius:16px;background:rgba(236,249,255,.95);border:1px solid rgba(107,202,242,.28);color:#315d73;font-size:10px;line-height:1.5}.numi-box.show{display:block}.numi-qs{display:none;margin-top:7px;gap:5px}.numi-qs.show{display:grid}.numi-q{padding:7px 8px;border-radius:10px;border:1px solid rgba(107,202,242,.25);background:#f8fdff;text-align:left;font-size:9px;color:inherit}.dark .numi-dot{background:#80d8fa}.dark .numi-box{background:rgba(10,28,40,.96);color:#d5f4ff}.dark .numi-q{background:#122a3b}.motion-chart-v38 path{stroke-dasharray:1100;stroke-dashoffset:1100;animation:draw38 1.15s cubic-bezier(.2,.8,.2,1) forwards}.motion-chart-v38 rect{transform-box:fill-box;transform-origin:center bottom;animation:bar38 .78s cubic-bezier(.2,.8,.2,1) both}@keyframes draw38{to{stroke-dashoffset:0}}@keyframes bar38{from{transform:scaleY(0);opacity:.2}to{transform:scaleY(1);opacity:1}}.ticket-stats38{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.ticket-stat38{padding:10px;border-radius:13px;background:#f8fafc;border:1px solid #e7edf3}.dark .ticket-stat38{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08)}.quality38{height:7px;border-radius:7px;background:#e4eaf1;overflow:hidden}.quality38 i{display:block;height:100%;border-radius:7px;background:linear-gradient(90deg,#6bcaf2,#567cf2)}.dark .quality38{background:rgba(255,255,255,.1)}@media(max-width:700px){.ticket-stats38{grid-template-columns:repeat(2,1fr)}}
+
+
+/* V3.9 unified contrast, premium unroll motion, universal analytics */
+header button{color:#fff!important}header .bg-amber-500,header [class*="bg-amber"]{color:#fff!important}header [class*="bg-white"]{color:#0f172a!important}.dark header [class*="bg-white"]{color:#fff!important}.priority-badge,.notification-count{color:#fff!important}.notification-count{min-width:17px;height:17px;border-radius:999px;display:inline-grid;place-items:center;padding:0 5px;background:#f43f5e;font:700 9px 'JetBrains Mono',monospace;border:2px solid rgba(255,255,255,.9)}
+.unroll-host{perspective:1200px;scroll-snap-type:y proximity;overflow-y:auto}.unroll-section{position:relative;scroll-snap-align:start;transform-origin:50% 0%;transform:rotateX(-5deg) translateY(12px) scale(.985);opacity:.38;filter:saturate(.85);transition:transform .52s cubic-bezier(.2,.85,.2,1),opacity .42s ease,filter .42s ease,box-shadow .42s ease}.unroll-section:before{content:'';position:absolute;left:7%;right:7%;top:-1px;height:12px;border-radius:50%;background:linear-gradient(180deg,rgba(15,23,42,.10),transparent);opacity:.35;transition:.4s}.unroll-section.unrolled{transform:none;opacity:1;filter:none;box-shadow:0 22px 55px rgba(30,49,79,.08)}.unroll-section.unrolled:before{opacity:0}.dark .unroll-section.unrolled{box-shadow:0 22px 55px rgba(0,0,0,.22)}
+.analytics-periods39{display:flex;gap:5px;flex-wrap:wrap}.period39{padding:6px 8px;border-radius:9px;border:1px solid rgba(100,116,139,.17);font:600 9px 'JetBrains Mono',monospace;color:#64748b}.period39.active{background:#0ea5e9;color:#fff;border-color:#0ea5e9}.dark .period39{color:#94a3b8;border-color:rgba(255,255,255,.09)}.dark .period39.active{color:#07111b;background:#7dd3fc}.analytics39{max-height:57vh;padding-right:5px}.analytics39-chart{height:180px}.analytics39-chart svg{width:100%;height:100%}.analytics39-card{padding:14px;border-radius:18px;margin-top:10px;background:rgba(248,250,252,.76);border:1px solid rgba(148,163,184,.15)}.dark .analytics39-card{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.07)}.motion39 path{stroke-dasharray:1100;stroke-dashoffset:1100;animation:draw39 1.05s cubic-bezier(.2,.8,.2,1) forwards}.motion39 rect{transform-box:fill-box;transform-origin:center bottom;animation:bar39 .7s cubic-bezier(.2,.8,.2,1) both}@keyframes draw39{to{stroke-dashoffset:0}}@keyframes bar39{from{transform:scaleY(0);opacity:.2}to{transform:scaleY(1);opacity:1}}.sound-toggle39{position:fixed;right:18px;bottom:18px;z-index:45;width:36px;height:36px;border-radius:13px;border:1px solid rgba(148,163,184,.18);background:rgba(255,255,255,.74);backdrop-filter:blur(18px);box-shadow:0 10px 28px rgba(30,49,79,.10);color:#475569}.dark .sound-toggle39{background:rgba(12,20,31,.78);color:#cbd5e1}.sound-toggle39.off{opacity:.45}.clickable-kpi39{cursor:pointer;transition:.2s}.clickable-kpi39:hover{transform:translateY(-2px);border-color:rgba(56,189,248,.32)}@media(prefers-reduced-motion:reduce){.unroll-section,.motion39 path,.motion39 rect{transition:none!important;animation:none!important;transform:none!important;opacity:1!important}} 
+
+
+/* V4.1 additive polish: exact V3.9 preserved */
+:root{color-scheme:light;--v41-title:#0f172a;--v41-glass:rgba(255,255,255,.72);--v41-edge:rgba(255,255,255,.92)}.dark{color-scheme:dark;--v41-title:#f8fbff;--v41-glass:rgba(13,18,28,.74);--v41-edge:rgba(255,255,255,.10)}
+.v41-title{color:var(--v41-title)!important}.v41-liquid{background:linear-gradient(135deg,var(--v41-glass),rgba(255,255,255,.38));border:1px solid var(--v41-edge);backdrop-filter:blur(36px) saturate(190%);box-shadow:0 20px 60px rgba(31,48,78,.10),inset 0 1px 0 var(--v41-edge);position:relative;overflow:hidden}.dark .v41-liquid{background:linear-gradient(135deg,rgba(20,27,40,.84),rgba(6,10,17,.68));box-shadow:0 24px 65px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.08)}.v41-liquid:after{content:'';position:absolute;inset:-45% -20%;background:linear-gradient(110deg,transparent 38%,rgba(255,255,255,.22) 48%,transparent 58%);transform:translateX(-65%);transition:transform .8s ease;pointer-events:none}.v41-liquid:hover:after{transform:translateX(65%)}
+#priority-bubble-btn span{color:#fff!important}#priority-bubble-btn .bg-yellow-400{color:#fff!important}.dark #nav-btn-overview,.dark #nav-btn-tickets.bg-white,.dark #nav-btn-tree.bg-white{color:#0f172a!important}.dark header .text-slate-400,.dark header .text-slate-300{color:#cbd5e1!important}.v41-structure{display:grid;grid-template-columns:repeat(3,minmax(270px,1fr));gap:12px;margin-top:12px}.v41-team{padding:13px;border-radius:18px}.v41-node{padding:9px;border-radius:13px;margin-top:7px;background:rgba(248,250,252,.70);border:1.5px solid rgba(148,163,184,.16);cursor:pointer;transition:.2s}.dark .v41-node{background:rgba(255,255,255,.035);border-color:rgba(255,255,255,.08)}.v41-node:hover{transform:translateY(-2px);border-color:rgba(56,189,248,.35)}.v41-node.online{box-shadow:0 0 0 1px rgba(34,197,94,.08),0 0 18px rgba(34,197,94,.08)}.v41-node.good{border-color:rgba(34,197,94,.42)}.v41-node.watch{border-color:rgba(245,158,11,.50)}.v41-presence{width:6px;height:6px;border-radius:50%;background:#22c55e;box-shadow:0 0 7px rgba(34,197,94,.5);float:right}.v41-role{font:700 8px 'JetBrains Mono',monospace;color:#0ea5e9;text-transform:uppercase}.v41-name{font-size:11px;font-weight:800;margin-top:2px}.v41-kpis{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px}.v41-kpis span{font:600 8px 'JetBrains Mono',monospace;padding:3px 5px;border-radius:6px;background:rgba(148,163,184,.10)}.v41-agents{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.v41-report-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:11px;background:#0f172a;color:#fff!important;font-size:10px;font-weight:750}.dark .v41-report-btn{background:#fff;color:#0f172a!important}
+@page{size:A4;margin:12mm}@media print{body.v41-printing{background:#fff!important;color:#000!important}body.v41-printing header,body.v41-printing main,body.v41-printing #toast-container,body.v41-printing #sound-toggle39,body.v41-printing .numi-dot,body.v41-printing .numi-box{display:none!important}body.v41-printing .v41-print-target{display:block!important;position:static!important;inset:auto!important;background:#fff!important;padding:0!important;backdrop-filter:none!important}body.v41-printing .v41-print-target>div{width:100%!important;max-width:none!important;max-height:none!important;overflow:visible!important;background:#fff!important;color:#000!important;border:0!important;box-shadow:none!important}body.v41-printing .v41-print-target .apple-card,body.v41-printing .v41-print-target .analytics39-card{background:#fff!important;color:#000!important;border:1px solid #ddd!important;box-shadow:none!important;break-inside:avoid}body.v41-printing .v41-print-target .no-print,body.v41-printing .v41-print-target button{display:none!important}body.v41-print-screen .screen-panel{display:none!important}body.v41-print-screen .screen-panel.v41-screen-target{display:block!important}body.v41-print-screen header,body.v41-print-screen #toast-container,body.v41-print-screen #sound-toggle39{display:none!important}}
+@media(max-width:900px){.v41-structure{grid-template-columns:1fr}}
+
+
+/* V4.2 ONLY: contrast + notification/message visibility. No layout or feature changes. */
+/* The alert popover was clipped by the liquid header overflow. */
+header .v41-liquid{overflow:visible!important}
+/* Requested badge numerals: black in red, orange and yellow circles. */
+#priority-bubble-btn span,
+#priority-bubble-btn .bg-rose-500,
+#priority-bubble-btn .bg-amber-500,
+#priority-bubble-btn .bg-yellow-400{color:#05070a!important;text-shadow:none!important}
+/* Keep foreground controls legible in both themes. */
+header .v41-title{color:#0f172a!important}
+.dark header .v41-title{color:#f8fafc!important}
+header #nav-btn-tickets,
+header #nav-btn-tree{color:#334155!important}
+.dark header #nav-btn-tickets,
+.dark header #nav-btn-tree{color:#e2e8f0!important}
+header #nav-btn-overview{color:#0f172a!important;background:#fff!important}
+.dark header #nav-btn-overview{color:#0f172a!important;background:#fff!important}
+header #nav-btn-overview i{color:#0ea5e9!important}
+/* Explicit active state, including after screen switching. */
+header nav button.bg-white{color:#0f172a!important;background:#fff!important}
+.dark header nav button.bg-white{color:#0f172a!important;background:#fff!important}
+/* Visible notifications popover in both themes. */
+#alerts-popover{z-index:9999!important;overflow:visible!important;color:#0f172a!important;background:rgba(255,255,255,.98)!important;border-color:rgba(148,163,184,.32)!important;box-shadow:0 24px 70px rgba(15,23,42,.22)!important}
+.dark #alerts-popover{color:#f8fafc!important;background:rgba(10,15,24,.98)!important;border-color:rgba(255,255,255,.12)!important;box-shadow:0 28px 80px rgba(0,0,0,.58)!important}
+#alerts-popover .text-slate-600{color:#475569!important}
+.dark #alerts-popover .text-slate-600,.dark #alerts-popover .dark\:text-slate-300{color:#cbd5e1!important}
+#alerts-popover .text-slate-900{color:#0f172a!important}
+.dark #alerts-popover .dark\:text-white{color:#f8fafc!important}
+/* Toast messages must remain visible above all application UI. */
+#toast-container{z-index:10000!important;display:flex!important;visibility:visible!important;opacity:1!important}
+#toast-container>div{opacity:1!important;transform:none!important;background:rgba(255,255,255,.98)!important;color:#0f172a!important;border-color:rgba(148,163,184,.34)!important;box-shadow:0 18px 50px rgba(15,23,42,.20)!important;backdrop-filter:blur(24px) saturate(170%)}
+.dark #toast-container>div{background:rgba(10,15,24,.98)!important;color:#f8fafc!important;border-color:rgba(255,255,255,.13)!important;box-shadow:0 22px 60px rgba(0,0,0,.55)!important}
+/* Sync and Export title/icon contrast shown in the supplied header screenshots. */
+header button[title="Real-time VPS / SQL Sync"]{color:#0f172a!important}
+.dark header button[title="Real-time VPS / SQL Sync"]{color:#f8fafc!important}
+header button[title="Export Executive PDF"]{color:#fff!important;background:#0f172a!important}
+.dark header button[title="Export Executive PDF"]{color:#0f172a!important;background:#fff!important}
+
+
+/* V4.3 ONLY: top sub-taskbar contrast and restrained hover. */
+/* Remove the metallic sweep added to the liquid header. */
+header .v41-liquid:after{display:none!important;content:none!important}
+header .v41-liquid:hover:after{display:none!important;transform:none!important}
+/* Remove exaggerated header hover/press motion while preserving all other app animations. */
+header .v41-liquid{overflow:visible!important}
+header .v41-liquid:hover{transform:none!important}
+header button:hover{transform:none!important}
+header button:active{transform:scale(.985)!important}
+/* Stable sub-taskbar shell. */
+header nav{background:rgba(15,23,42,.96)!important;border-color:rgba(255,255,255,.10)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)!important}
+/* Black surface = white text. */
+header nav button{background:transparent!important;color:#ffffff!important;box-shadow:none!important;opacity:.92!important}
+header nav button i{color:inherit!important}
+header nav button:hover{background:rgba(255,255,255,.08)!important;color:#ffffff!important;opacity:1!important}
+/* White selected surface = black text, in both themes and after JS navigation changes. */
+header nav button.bg-white,
+header #nav-btn-overview.bg-white,
+header #nav-btn-tickets.bg-white,
+header #nav-btn-tree.bg-white{background:#ffffff!important;color:#0b0f17!important;box-shadow:0 3px 10px rgba(0,0,0,.12)!important;opacity:1!important}
+header nav button.bg-white i,
+header #nav-btn-overview.bg-white i,
+header #nav-btn-tickets.bg-white i,
+header #nav-btn-tree.bg-white i{color:#0ea5e9!important}
+.dark header nav{background:rgba(3,7,13,.96)!important;border-color:rgba(255,255,255,.12)!important}
+.dark header nav button{color:#ffffff!important}
+.dark header nav button.bg-white,
+.dark header #nav-btn-overview.bg-white,
+.dark header #nav-btn-tickets.bg-white,
+.dark header #nav-btn-tree.bg-white{background:#ffffff!important;color:#0b0f17!important}
+
+
+/* V4.4 exact header transplant compatibility layer. Header only. */
+header .liquid-glass{
+  background:linear-gradient(135deg,rgba(255,255,255,.74),rgba(255,255,255,.50))!important;
+  border:1px solid rgba(255,255,255,.84)!important;
+  box-shadow:0 18px 55px rgba(33,46,72,.10),inset 0 1px 0 rgba(255,255,255,.82)!important;
+  backdrop-filter:blur(34px) saturate(180%)!important;
+  -webkit-backdrop-filter:blur(34px) saturate(180%)!important;
+  overflow:visible!important;
+}
+.dark header .liquid-glass{
+  background:rgba(15,18,26,.82)!important;
+  border-color:rgba(255,255,255,.08)!important;
+  box-shadow:0 16px 36px -10px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.1)!important;
+}
+header .liquid-glass:after,header .liquid-glass:hover:after{display:none!important;content:none!important}
+header nav{background:rgba(226,232,240,.60)!important;border-color:rgba(226,232,240,.80)!important;box-shadow:none!important}
+.dark header nav{background:rgba(0,0,0,.40)!important;border-color:rgba(255,255,255,.10)!important}
+header nav button{background:transparent!important;color:#475569!important;opacity:1!important;box-shadow:none!important}
+.dark header nav button{color:#94a3b8!important}
+header nav button:hover{background:transparent!important;color:#0f172a!important}
+.dark header nav button:hover{color:#fff!important}
+header nav button.bg-white{background:#fff!important;color:#0f172a!important;box-shadow:0 1px 2px rgba(0,0,0,.05)!important}
+.dark header nav button.bg-white{background:#fff!important;color:#0f172a!important}
+header nav button.bg-white i{color:#0ea5e9!important}
+#priority-bubble-btn span{color:#fff!important;text-shadow:none!important}
+#priority-bubble-btn .bg-yellow-400{color:#78350f!important}
+header button[title="Real-time VPS / SQL Sync"]{color:#334155!important}
+.dark header button[title="Real-time VPS / SQL Sync"]{color:#cbd5e1!important}
+header button[title="Export Executive PDF"]{background:#0f172a!important;color:#fff!important}
+.dark header button[title="Export Executive PDF"]{background:#fff!important;color:#0f172a!important}
+header button:hover{transform:none!important}
+header button:active{transform:scale(.965)!important}
+#alerts-popover{z-index:9999!important;overflow:visible!important}
+
+
+/* V4.7 targeted fixes only. */
+header nav button{transition:background-color .24s ease,color .24s ease,box-shadow .24s ease,transform .24s cubic-bezier(.2,.8,.2,1)!important}
+header nav button:not(.bg-white){background:transparent!important;box-shadow:none!important;color:#475569!important}
+.dark header nav button:not(.bg-white){color:#94a3b8!important}
+header nav button.bg-white{background:#fff!important;color:#0f172a!important;box-shadow:0 2px 9px rgba(15,23,42,.11)!important;transform:translateY(-1px)}
+.dark header nav button.bg-white{background:#fff!important;color:#0f172a!important}
+header nav button[disabled]{pointer-events:none;cursor:default;opacity:1!important}
+#tree-container .profile-selected-online{box-shadow:0 0 0 2px rgba(34,197,94,.82),0 0 16px rgba(34,197,94,.44)!important}
+#tree-container .profile-selected-busy{box-shadow:0 0 0 2px rgba(245,158,11,.84),0 0 16px rgba(245,158,11,.40)!important}
+#tree-container .profile-selected-offline{box-shadow:0 0 0 1px rgba(148,163,184,.38)!important}
+#dossier-photo.profile-selected-online{box-shadow:0 0 0 3px rgba(34,197,94,.82),0 0 22px rgba(34,197,94,.40)!important}#dossier-photo.profile-selected-busy{box-shadow:0 0 0 3px rgba(245,158,11,.84),0 0 22px rgba(245,158,11,.38)!important}#dossier-photo.profile-selected-offline{box-shadow:0 0 0 2px rgba(148,163,184,.38)!important}
+.analytics39-card{min-height:220px}.analytics39-chart{min-height:180px}.analytics39-chart svg{display:block;width:100%;height:180px}
+
+</style>
+</head>
+
+<body class="bg-[#f5f5f7] dark:bg-[#090b10] text-[#1d1d1f] dark:text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-sky-500 selection:text-white transition-colors duration-300">
+
+  <!-- SINGLE TOP LIQUID GLASS BAR -->
+  <header class="no-print sticky top-0 z-40 w-full px-4 lg:px-8 py-3">
+    <div class="max-w-7xl mx-auto liquid-glass rounded-2xl px-4 py-2.5 flex items-center justify-between gap-3 transition-all">
+      
+      <!-- LEFT: Three-Color Priority Bubble (Red, Orange, Yellow) + Brand -->
+      <div class="flex items-center space-x-3">
+        <div class="relative">
+          <button id="priority-bubble-btn" onclick="toggleAlertsDrawer()" class="flex items-center space-x-1.5 bg-slate-100/90 dark:bg-black/40 border border-slate-200 dark:border-white/10 px-2.5 py-1.5 rounded-full hover:border-slate-300 dark:hover:border-white/20 transition shadow-inner" title="View Active Priority Floor Alerts">
+            <i class="fa-solid fa-bell text-[11px] text-slate-500 dark:text-slate-300 mr-0.5"></i>
+            
+            <!-- Red Badge (P1) -->
+            <span class="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-rose-500 text-white font-mono text-[10px] font-bold shadow-sm shadow-rose-500/20" title="P1 Critical Urgent">
+              3
+            </span>
+            <!-- Orange Badge (P2) -->
+            <span class="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-amber-500 text-white font-mono text-[10px] font-bold shadow-sm shadow-amber-500/20" title="P2 Moderate Issue">
+              5
+            </span>
+            <!-- Yellow Badge (P3) -->
+            <span class="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-yellow-400 text-amber-950 font-mono text-[10px] font-bold shadow-sm shadow-yellow-400/20" title="P3 Caution Advisory">
+              2
+            </span>
+          </button>
+
+          <!-- Priority Alerts Popover -->
+          <div id="alerts-popover" class="hidden absolute left-0 top-12 w-80 bg-white dark:bg-[#111622] border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl p-4 z-50 text-xs space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-white/[0.08]">
+              <span class="font-bold font-mono text-[11px] tracking-wide text-slate-900 dark:text-white uppercase flex items-center gap-1.5">
+                <i class="fa-solid fa-triangle-exclamation text-amber-500 text-xs"></i>
+                Floor Priorities (10 Active)
+              </span>
+              <button onclick="toggleAlertsDrawer()" class="text-slate-400 hover:text-slate-700 dark:hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="space-y-2 max-h-72 overflow-y-auto pr-1">
+              <div onclick="openMetricDrillDown('AHT'); toggleAlertsDrawer();" class="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-500/40 cursor-pointer hover:border-rose-400 transition flex items-start space-x-2.5">
+                <span class="px-1.5 py-0.5 rounded bg-rose-500 text-white font-mono font-bold text-[9px]">P1</span>
+                <div>
+                  <div class="font-bold text-rose-700 dark:text-rose-300 text-[11px]">Falcon Pod AHT Spike (+38s)</div>
+                  <div class="text-[10px] text-slate-600 dark:text-slate-300">Technical billing hold duration exceeded 120s limit.</div>
+                </div>
+              </div>
+
+              <div onclick="switchMainScreen('screen-tree'); openPersonModal('agent-mariam'); toggleAlertsDrawer();" class="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-500/40 cursor-pointer hover:border-amber-400 transition flex items-start space-x-2.5">
+                <span class="px-1.5 py-0.5 rounded bg-amber-500 text-white font-mono font-bold text-[9px]">P2</span>
+                <div>
+                  <div class="font-bold text-amber-700 dark:text-amber-300 text-[11px]">Aux Adherence Drift</div>
+                  <div class="text-[10px] text-slate-600 dark:text-slate-300">Mariam Youssef logged 26m unapproved break aux.</div>
+                </div>
+              </div>
+
+              <div onclick="switchMainScreen('screen-tickets'); toggleAlertsDrawer();" class="p-2.5 rounded-xl bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-500/30 cursor-pointer hover:border-yellow-400 transition flex items-start space-x-2.5">
+                <span class="px-1.5 py-0.5 rounded bg-yellow-400 text-amber-950 font-mono font-bold text-[9px]">P3</span>
+                <div>
+                  <div class="font-bold text-yellow-800 dark:text-yellow-300 text-[11px]">Mid-Shift Chat Concurrency Drop</div>
+                  <div class="text-[10px] text-slate-600 dark:text-slate-300">Hour 5 response lag detected across Pod Rapid Chat.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-2 border-t border-slate-100 dark:border-white/[0.08] flex items-center justify-between text-[10px] font-mono">
+              <span class="text-slate-400">Telemetry Feed</span>
+              <button onclick="dismissAllAlerts()" class="text-sky-600 dark:text-sky-400 font-semibold hover:underline">Acknowledge All</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="hidden sm:flex items-center space-x-2 pl-1 border-l border-slate-200 dark:border-white/10">
+          <span class="font-extrabold text-xs tracking-wider text-slate-900 dark:text-white">NOME</span>
+          <span title="Demo-only operational context. No automated employee ranking or employment decision." class="text-[9px] font-mono px-2 py-0.5 rounded bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-200 dark:border-sky-500/20 font-bold">OM EXEC</span>
+        </div>
+      </div>
+
+      <nav class="flex items-center space-x-1 bg-slate-200/60 dark:bg-black/40 p-1 rounded-xl border border-slate-200/80 dark:border-white/10 text-xs font-semibold">
+        <button id="nav-btn-tickets" onclick="switchMainScreen('screen-tickets')" class="px-3.5 py-1.5 rounded-lg transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center gap-1.5">
+          <i class="fa-solid fa-arrow-left text-[10px] opacity-60"></i>
+          <span>Live Tickets</span>
+        </button>
+
+        <button id="nav-btn-overview" onclick="switchMainScreen('screen-overview')" class="px-4 py-1.5 rounded-lg transition-all bg-white dark:bg-white text-slate-900 dark:text-slate-950 shadow-sm font-bold flex items-center gap-1.5">
+          <i class="fa-solid fa-house text-[10px] text-sky-500"></i>
+          <span>Hi, Bahaa</span>
+        </button>
+
+        <button id="nav-btn-tree" onclick="switchMainScreen('screen-tree')" class="px-3.5 py-1.5 rounded-lg transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white flex items-center gap-1.5">
+          <span>Accountability Tree</span>
+          <i class="fa-solid fa-arrow-right text-[10px] opacity-60"></i>
+        </button>
+      </nav>
+
+      <!-- RIGHT: Theme, Real-time Sync & PDF Export -->
+      <div class="flex items-center space-x-2">
+        <button onclick="toggleTheme()" title="Toggle Light / Dark Mode" class="w-8 h-8 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 flex items-center justify-center transition">
+          <i id="theme-toggle-icon" class="fa-solid fa-moon text-xs"></i>
+        </button>
+
+        <button onclick="triggerDataSync()" title="Real-time VPS / SQL Sync" class="hidden sm:flex items-center space-x-1.5 bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 px-3 py-1.5 rounded-xl text-xs font-mono text-slate-700 dark:text-slate-300 transition">
+          <i id="top-sync-icon" class="fa-solid fa-arrows-rotate text-emerald-600 text-[10px]"></i>
+          <span class="hidden md:inline font-semibold">Sync</span>
+        </button>
+
+        <button onclick="triggerFastExport()" title="Export Executive PDF" class="flex items-center space-x-1.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:opacity-90 px-3.5 py-1.5 rounded-xl text-xs font-bold transition shadow-sm active:scale-95">
+          <i class="fa-solid fa-file-pdf text-rose-500 text-[11px]"></i>
+          <span>Export</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-7xl mx-auto w-full px-4 lg:px-8 py-4">
+
+    <!-- ======================================================= -->
+    <!-- SCREEN 1 (CENTER): HI BAHAA (EXECUTIVE CLEAN OVERVIEW) -->
+    <!-- ======================================================= -->
+    <section id="screen-overview" class="screen-panel space-y-6 block">
+      
+      <!-- Centered Greeting & Active Telemetry Badges -->
+      <div class="text-center max-w-3xl mx-auto py-3 space-y-2">
+        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-sky-50 dark:bg-sky-500/10 border border-sky-200/80 dark:border-sky-500/20 text-sky-700 dark:text-sky-400 font-mono text-[10px] font-bold uppercase tracking-wider">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 pulse-indicator"></span>
+          <span>Operations Manager Executive Console &bull; BPO Telemetry &bull; DEMO DATA</span>
+        </div>
+        
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+          Hi, <span class="bg-gradient-to-r from-sky-600 to-blue-600 dark:from-sky-400 dark:to-blue-400 bg-clip-text text-transparent">Bahaa</span>
+        </h1>
+        
+        <p class="text-xs text-slate-500 dark:text-slate-400 max-w-xl mx-auto">
+          Floor operations are operating at <strong class="text-emerald-600 dark:text-emerald-400 font-bold">92.4% overall compliance</strong>. Monitoring shift handoffs, billing hold anomalies, and coaching returns.
+        </p>
+
+        <!-- Floor Status Indicators in Center -->
+        <div class="flex flex-wrap items-center justify-center gap-3 pt-1 text-xs font-mono text-slate-600 dark:text-slate-400">
+          <span class="px-2.5 py-1 rounded-lg bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-xs">
+            Staffed Floor: <strong id="staffed-floor-value" class="text-slate-900 dark:text-white">14 / 18 Agents Active</strong>
+          </span>
+          <span class="px-2.5 py-1 rounded-lg bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-xs">
+            Shift: <strong class="text-slate-900 dark:text-white">Alpha (08:00 - 17:00)</strong>
+          </span>
+          <span class="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300 font-bold shadow-xs">
+            Floor SLA: 88.4% (Target: 85.0%)
+          </span>
+        </div>
+      </div>
+
+      <!-- Intelligent Comparison Engine Selector -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white dark:bg-[#111520] p-2.5 rounded-2xl border border-slate-200 dark:border-white/10 shadow-xs">
+        <div class="flex items-center space-x-2 text-xs font-bold text-slate-700 dark:text-slate-300 pl-1">
+          <i class="fa-solid fa-chart-line text-sky-600 dark:text-sky-400"></i>
+          <span>Intelligent Comparison Engine:</span>
+        </div>
+
+        <div class="inline-flex rounded-xl bg-slate-100 dark:bg-white/5 p-1 border border-slate-200 dark:border-white/10 text-xs font-mono font-medium">
+          <button id="btn-comp-dod" onclick="setComparisonMode('dod')" class="px-3 py-1 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-xs font-bold transition">
+            Day-over-Day (DoD)
+          </button>
+          <button id="btn-comp-wow" onclick="setComparisonMode('wow')" class="px-3 py-1 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">
+            Week-over-Week (WoW)
+          </button>
+          <button id="btn-comp-base" onclick="setComparisonMode('baseline')" class="px-3 py-1 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">
+            vs. SLA Baseline
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        
+        <!-- Chart 1: Semi-Doughnut (Quality & Sentiment Distribution Gauge) -->
+        <div onclick="openMetricDrillDown('QA')" class="apple-card apple-card-hover rounded-2xl p-5 flex flex-col justify-between cursor-pointer group">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-white/[0.06]">
+            <div>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">QA Sentiment & Compliance</h3>
+              <p class="text-[10px] text-slate-500 dark:text-slate-400" id="gauge-sublabel">Interaction audit distribution</p>
+            </div>
+            <span class="text-[9px] font-mono text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-500/10 px-2 py-0.5 rounded border border-sky-200 dark:border-sky-500/20 font-bold">GAUGE</span>
+          </div>
+          
+          <div class="my-3 relative h-44 flex items-center justify-center">
+            <canvas id="overviewPieChart"></canvas>
+            <div class="absolute text-center mt-8">
+              <div class="text-2xl font-bold font-mono text-slate-900 dark:text-white" id="gauge-center-val">92.6%</div>
+              <div class="text-[9px] text-slate-500 font-mono">Net Quality</div>
+            </div>
+          </div>
+
+          <div class="pt-2 border-t border-slate-100 dark:border-white/[0.06] grid grid-cols-3 text-center font-mono text-xs">
+            <div><span class="text-emerald-600 dark:text-emerald-400 font-bold" id="gauge-pass-val">76%</span><div class="text-[9px] text-slate-500">Pass</div></div>
+            <div><span class="text-amber-600 dark:text-amber-400 font-bold" id="gauge-rev-val">18%</span><div class="text-[9px] text-slate-500">Review</div></div>
+            <div><span class="text-rose-600 dark:text-rose-400 font-bold" id="gauge-coach-val">6%</span><div class="text-[9px] text-slate-500">Coach</div></div>
+          </div>
+        </div>
+
+        <!-- Chart 2: Comparative Dual-Bar (Intraday Volume vs Baseline) -->
+        <div onclick="openMetricDrillDown('Volume')" class="apple-card apple-card-hover rounded-2xl p-5 flex flex-col justify-between cursor-pointer group">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-white/[0.06]">
+            <div>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">Hourly Inbound Load</h3>
+              <p class="text-[10px] text-slate-500 dark:text-slate-400" id="bar-sublabel">Current vs Comparison Interval</p>
+            </div>
+            <span class="text-[9px] font-mono text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-500/20 font-bold">DUAL-BAR</span>
+          </div>
+
+          <div class="my-3 relative h-44">
+            <canvas id="overviewBarChart"></canvas>
+          </div>
+
+          <div class="pt-2 border-t border-slate-100 dark:border-white/[0.06] flex items-center justify-between text-[10px] text-slate-500 font-mono">
+            <span>Peak Hour: <strong class="text-slate-900 dark:text-white">11:00 AM (420 tck)</strong></span>
+            <span class="text-sky-600 dark:text-sky-400 font-semibold" id="bar-delta-summary">+142 tck vs Prev</span>
+          </div>
+        </div>
+
+        <!-- Chart 3: Smooth Stepped Area Line (AHT Resolution Trend with Variance Band) -->
+        <div onclick="openMetricDrillDown('AHT')" class="apple-card apple-card-hover rounded-2xl p-5 flex flex-col justify-between cursor-pointer group border-rose-300 dark:border-rose-500/30">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-white/[0.06]">
+            <div>
+              <h3 class="font-bold text-slate-900 dark:text-white text-xs">AHT Progression Curve</h3>
+              <p class="text-[10px] text-slate-500 dark:text-slate-400" id="line-sublabel">Seconds vs Target Ceiling</p>
+            </div>
+            <span class="text-[9px] font-mono text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-500/10 px-2 py-0.5 rounded border border-rose-200 dark:border-rose-500/20 font-bold">AREA CURVE</span>
+          </div>
+
+          <div class="my-3 relative h-44">
+            <canvas id="overviewLineChart"></canvas>
+          </div>
+
+          <div class="pt-2 border-t border-slate-100 dark:border-white/[0.06] flex items-center justify-between text-[10px] text-slate-500 font-mono">
+            <span>Variance: <strong class="text-rose-600 dark:text-rose-400 font-bold" id="aht-delta-summary">+24s vs Bench</strong></span>
+            <span class="text-sky-600 dark:text-sky-400 font-semibold underline">Inspect Anomaly &rarr;</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div>
+        <div class="flex items-center justify-between mb-3 text-xs">
+          <span class="font-mono text-slate-500 uppercase font-semibold">
+            Operational Account KPIs (Click any metric for deep-dive root-cause)
+          </span>
+          <span class="text-[10px] font-mono text-sky-600 dark:text-sky-400 font-semibold" id="active-comp-tag">Active Interval: Day-over-Day (DoD)</span>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3.5">
+          
+          <!-- KPI 1: SLA -->
+          <div onclick="openMetricDrillDown('SLA')" class="apple-card apple-card-hover rounded-2xl p-3.5 cursor-pointer group">
+            <div class="text-slate-500 text-[11px] font-medium flex items-center justify-between">
+              <span>Account SLA (85/20)</span>
+              <i class="fa-solid fa-shield-halved text-sky-600 text-xs"></i>
+            </div>
+            <div class="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1">88.4%</div>
+            <div class="mt-2 pt-1.5 border-t border-slate-100 dark:border-white/[0.06] flex items-center justify-between text-[10px] font-mono">
+              <span class="text-emerald-600 dark:text-emerald-400" id="kpi-sla-delta">+2.1% DoD</span>
+              <span class="text-slate-400">Target 85%</span>
+            </div>
+          </div>
+
+          <!-- KPI 2: CSAT -->
+          <div onclick="openMetricDrillDown('CSAT')" class="apple-card apple-card-hover rounded-2xl p-3.5 cursor-pointer group">
+            <div class="text-slate-500 text-[11px] font-medium flex items-center justify-between">
+              <span>Customer CSAT</span>
+              <i class="fa-solid fa-star text-amber-500 text-xs"></i>
+            </div>
+            <div class="text-xl font-bold font-mono text-slate-900 dark:text-white mt-1">91.2%</div>
+            <div class="mt-2 pt-1.5 border-t border-slate-100 dark:border-white/[0.06] flex items-center justify-between text-[10px] font-mono">
+              <span class="text-emerald-600 dark:text-emerald-400" id="kpi-csat-delta">+1.6% DoD</span>
+              <span class="text-slate-400">Target 88%</span>
+            </div>
+          </div>
+
+          <!-- KPI 3: AHT -->
+          <div onclick="openMetricDrillDown('AHT')" class="apple-card apple-card-hover rounded-2xl p-3.5 cursor-pointer group border-rose-300 dark:border-rose-500/40">
+            <div class="text-slate-500 text-[11px] font-medium flex items-center justify-between">
+              <span>Blended AHT</span>
+              <i class="fa-solid fa-stopwatch text-rose-500 text-xs"></i>
+            </div>
+            <div class="text-xl font-bold font-mono text-rose-600 dark:text-rose-400 mt-1">372s</div>
+            <div class="mt-2 pt-1.5 border-t border-slate-100 dark:border-white/[0.06] flex items-center justify-between text-[10px] font-mono">
+              <span class="text-rose-600 dark:text-rose-400 font-bold" id="kpi-aht-delta">+24s DoD (Spike)</span>
+              <span class="text-slate-400">Goal 345s</span>
+            </div>
+          </div>
+
+          <!-- KPI 4: FCR -->
+          <div onclick="openMetricDrillDown('FCR')" class="apple-card apple-card-hover rounded-2xl p-3.5 cursor-pointer group">
+            <div class="text-slate-500 text-[11px] font-medium flex items-center justify-between">
+              <span>First Contact Res. (FCR)</span>
+              <i class="fa-solid fa-circle-check text-emerald-500 text-xs"></i>
+            </div>
+            <div class="text-xl font-bold font-mono text-slate-900 dark:text-white mt-1">78.5%</div>
+            <div class="mt-2 pt-1.5 border-t border-slate-100 dark:border-white/[0.06] flex items-center justify-between text-[10px] font-mono">
+              <span class="text-emerald-600 dark:text-emerald-400" id="kpi-fcr-delta">+1.2% DoD</span>
+              <span class="text-slate-400">Bench 74%</span>
+            </div>
+          </div>
+
+          <!-- KPI 5: Occupancy -->
+          <div onclick="openMetricDrillDown('Occupancy')" class="apple-card apple-card-hover rounded-2xl p-3.5 cursor-pointer group">
+            <div class="text-slate-500 text-[11px] font-medium flex items-center justify-between">
+              <span>Floor Occupancy Rate</span>
+              <i class="fa-solid fa-users-viewfinder text-sky-500 text-xs"></i>
+            </div>
+            <div class="text-xl font-bold font-mono text-slate-900 dark:text-white mt-1">82.6%</div>
+            <div class="mt-2 pt-1.5 border-t border-slate-100 dark:border-white/[0.06] flex items-center justify-between text-[10px] font-mono">
+              <span class="text-slate-500" id="kpi-occ-delta">+0.4% DoD</span>
+              <span class="text-slate-400">Band 78-85%</span>
+            </div>
+          </div>
+
+          <!-- KPI 6: Shrinkage -->
+          <div onclick="openMetricDrillDown('Shrinkage')" class="apple-card apple-card-hover rounded-2xl p-3.5 cursor-pointer group">
+            <div class="text-slate-500 text-[11px] font-medium flex items-center justify-between">
+              <span>Account Shrinkage</span>
+              <i class="fa-solid fa-clock-rotate-left text-amber-500 text-xs"></i>
+            </div>
+            <div class="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1">14.8%</div>
+            <div class="mt-2 pt-1.5 border-t border-slate-100 dark:border-white/[0.06] flex items-center justify-between text-[10px] font-mono">
+              <span class="text-emerald-600 dark:text-emerald-400" id="kpi-shrink-delta">-0.9% DoD</span>
+              <span class="text-slate-400">Cap &lt;16%</span>
+            </div>
+          </div>
+
+          <!-- KPI 7: Schedule Adherence -->
+          <div onclick="openMetricDrillDown('Adherence')" class="apple-card apple-card-hover rounded-2xl p-3.5 cursor-pointer group">
+            <div class="text-slate-500 text-[11px] font-medium flex items-center justify-between">
+              <span>Schedule Adherence</span>
+              <i class="fa-solid fa-user-clock text-indigo-500 text-xs"></i>
+            </div>
+            <div class="text-xl font-bold font-mono text-slate-900 dark:text-white mt-1">93.2%</div>
+            <div class="mt-2 pt-1.5 border-t border-slate-100 dark:border-white/[0.06] flex items-center justify-between text-[10px] font-mono">
+              <span class="text-slate-500" id="kpi-adh-delta">+0.8% DoD</span>
+              <span class="text-slate-400">Target 92%</span>
+            </div>
+          </div>
+
+          <!-- KPI 8: QA Score -->
+          <div onclick="openMetricDrillDown('QA')" class="apple-card apple-card-hover rounded-2xl p-3.5 cursor-pointer group">
+            <div class="text-slate-500 text-[11px] font-medium flex items-center justify-between">
+              <span>Net Quality Score</span>
+              <i class="fa-solid fa-award text-yellow-500 text-xs"></i>
+            </div>
+            <div class="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1">92.6%</div>
+            <div class="mt-2 pt-1.5 border-t border-slate-100 dark:border-white/[0.06] flex items-center justify-between text-[10px] font-mono">
+              <span class="text-emerald-600 dark:text-emerald-400" id="kpi-qa-delta">+1.4% DoD</span>
+              <span class="text-slate-400">Target 90%</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Operations Health Matrix Table -->
+      <div class="apple-card rounded-2xl p-5">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-white/[0.06]">
+          <div>
+            <h3 class="font-bold text-slate-900 dark:text-white text-xs flex items-center gap-2">
+              <i class="fa-solid fa-table-cells text-sky-600 dark:text-sky-400"></i>
+              <span>Operations Health Matrix Overview</span>
+            </h3>
+            <p class="text-[10px] text-slate-500">Floor-wide balanced scorecard comparing current pace against contractual thresholds</p>
+          </div>
+          <button onclick="triggerFastExport()" class="text-xs font-semibold text-sky-600 dark:text-sky-400 hover:underline">
+            <i class="fa-solid fa-download mr-1"></i> Export Matrix
+          </button>
+        </div>
+
+        <div class="overflow-x-auto mt-3">
+          <table class="w-full text-left text-xs">
+            <thead class="text-[10px] text-slate-500 uppercase tracking-wider bg-slate-50 dark:bg-white/[0.02] font-mono">
+              <tr>
+                <th class="py-2.5 px-3 rounded-l-lg">Metric Name</th>
+                <th class="py-2.5 px-3">Contract Target</th>
+                <th class="py-2.5 px-3">Current Pace</th>
+                <th class="py-2.5 px-3">Comparison Interval</th>
+                <th class="py-2.5 px-3 text-center">Interval Delta</th>
+                <th class="py-2.5 px-3 text-center">Status</th>
+                <th class="py-2.5 px-3 rounded-r-lg text-right">Action Plan</th>
+              </tr>
+            </thead>
+            <tbody id="matrix-table-body" class="divide-y divide-slate-100 dark:divide-white/[0.04] font-medium text-slate-700 dark:text-slate-300">
+              <!-- Populated dynamically via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ======================================================= -->
+    <!-- SCREEN 2 (LEFT): LIVE TICKETS & ALERTS STREAM           -->
+    <!-- ======================================================= -->
+    <section id="screen-tickets" class="screen-panel hidden space-y-5">
+      
+      <!-- Top Floor Alert Banner with Priority Badges -->
+      <div class="apple-card rounded-2xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-amber-200 dark:border-amber-500/20 bg-amber-50/40 dark:bg-amber-950/10">
+        <div class="flex items-start space-x-3.5">
+          <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center text-lg shrink-0 mt-0.5">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <h2 class="text-base font-bold text-slate-900 dark:text-white">Floor Priority Telemetry Feed</h2>
+              <span class="px-2 py-0.5 rounded-full bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300 font-mono text-[10px] font-bold border border-rose-200 dark:border-rose-500/30">10 ALERTS IDENTIFIED</span>
+            </div>
+            <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">
+              Active root anomaly: <strong class="text-rose-600 dark:text-rose-400">Falcon Pod billing queue</strong> (+38s variance) &bull; Mariam Youssef exceeds allowable Aux &bull; Hour 5 chat fatigue.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-2 shrink-0">
+          <button id="pause-stream-btn" onclick="toggleStreamSimulation()" class="px-3.5 py-1.5 rounded-xl bg-white dark:bg-white/5 hover:bg-slate-50 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 text-xs font-mono text-slate-700 dark:text-slate-300 transition flex items-center gap-1.5 shadow-xs">
+            <i class="fa-solid fa-pause text-[10px]" id="pause-stream-icon"></i>
+            <span id="pause-stream-text">Pause Feed</span>
+          </button>
+          <button onclick="triggerFastExport()" class="px-3.5 py-1.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs font-bold transition shadow-xs">
+            <i class="fa-solid fa-file-pdf mr-1 text-rose-500"></i> Export Feed
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Stream Table of Interactions with Photos & Metadata -->
+      <div class="apple-card rounded-2xl p-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-white/[0.06]">
+          <div>
+            <h3 class="font-bold text-slate-900 dark:text-white text-xs flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 pulse-indicator"></span>
+              <span>Live Floor Ingestion Feed (~4.4 interactions / min)</span>
+            </h3>
+            <p class="text-[10px] text-slate-500">Real-time audited customer calls, chats, video meetings, and email dispatches</p>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <input type="text" id="ticket-filter-input" onkeyup="applyTicketFilter()" placeholder="Search agent, leader..." class="bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-1.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-sky-500 font-mono">
+            <select id="channel-filter-select" onchange="applyTicketFilter()" class="bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 dark:text-slate-300 focus:outline-none font-mono">
+              <option value="all">All Channels</option>
+              <option value="Voice">Voice Call</option>
+              <option value="Live Chat">Live Chat</option>
+              <option value="Video / Meet">Video Meeting</option>
+              <option value="Email">Email</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto mt-3">
+          <table class="w-full text-left text-xs">
+            <thead class="text-[10px] text-slate-500 uppercase tracking-wider bg-slate-50 dark:bg-white/[0.02] font-mono">
+              <tr>
+                <th class="py-3 px-3 rounded-l-lg">Ticket</th>
+                <th class="py-3 px-3">Agent Profile</th>
+                <th class="py-3 px-3">Assigned Leader</th>
+                <th class="py-3 px-3">Channel / Type</th>
+                <th class="py-3 px-3 text-center">Duration (PR)</th>
+                <th class="py-3 px-3 text-center">Quality (QA %)</th>
+                <th class="py-3 px-3 text-center">Behavioral Check</th>
+                <th class="py-3 px-3 rounded-r-lg text-right">Audit</th>
+              </tr>
+            </thead>
+            <tbody id="tickets-table-body" class="divide-y divide-slate-100 dark:divide-white/[0.04] font-medium text-slate-700 dark:text-slate-300">
+              <!-- Dynamically populated with 13+ entries -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ======================================================= -->
+    <!-- SCREEN 3 (RIGHT): ACCOUNTABILITY TREE (18+ MEMBERS)     -->
+    <!-- ======================================================= -->
+    <section id="screen-tree" class="screen-panel hidden space-y-4">
+      
+      <!-- Tree Controls Header -->
+      <div class="apple-card rounded-2xl px-5 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div>
+          <div class="text-[10px] font-mono uppercase text-sky-600 dark:text-sky-400 font-bold flex items-center gap-1.5">
+            <i class="fa-solid fa-sitemap"></i>
+            <span>Interactive Floor Canvas &bull; Multi-Tier Accountability Hierarchy (18+ Mock Members)</span>
+          </div>
+          <h2 class="text-base font-extrabold text-slate-900 dark:text-white mt-0.5">
+            Organizational Structure & Role-Specific Telemetry
+          </h2>
+          <p class="text-[11px] text-slate-500">Drag canvas to navigate. Click any member to open their central dossier card with historical comparison charts & AI notes.</p>
+        </div>
+
+        <!-- Zoom & Pan Controls -->
+        <div class="flex items-center space-x-1.5 bg-slate-100 dark:bg-black/40 p-1 rounded-xl border border-slate-200 dark:border-white/10">
+          <button onclick="zoomTree(0.15)" title="Zoom In" class="w-7 h-7 rounded-lg hover:bg-slate-200 dark:hover:bg-white/10 flex items-center justify-center text-slate-700 dark:text-slate-300 transition">
+            <i class="fa-solid fa-plus text-xs"></i>
+          </button>
+          <button onclick="zoomTree(-0.15)" title="Zoom Out" class="w-7 h-7 rounded-lg hover:bg-slate-200 dark:hover:bg-white/10 flex items-center justify-center text-slate-700 dark:text-slate-300 transition">
+            <i class="fa-solid fa-minus text-xs"></i>
+          </button>
+          <button onclick="resetTreeTransform()" title="Reset Canvas" class="px-2 h-7 rounded-lg hover:bg-slate-200 dark:hover:bg-white/10 flex items-center justify-center text-[10px] font-mono text-slate-700 dark:text-slate-300 transition">
+            Reset
+          </button>
+          <span class="text-[10px] font-mono text-sky-600 dark:text-sky-400 px-2 font-bold" id="tree-zoom-label">100%</span>
+        </div>
+      </div>
+
+      <!-- Pannable / Zoomable Interactive Canvas -->
+      <div id="tree-viewport" class="apple-card rounded-2xl h-[640px] overflow-hidden relative select-none cursor-grab active:cursor-grabbing tree-grid-bg">
+        
+        <div id="tree-container" class="absolute left-1/2 top-8 -translate-x-1/2 origin-top transition-transform duration-75 flex flex-col items-center min-w-[1450px] pb-32">
+          
+          <!-- LEVEL 1: OM (Bahaa M.) -->
+          <div onclick="openPersonModal('om-bahaa')" class="cursor-pointer group relative">
+            <div class="apple-card apple-card-hover rounded-2xl p-4 w-80 border-2 border-sky-500 shadow-lg flex items-center space-x-3.5 bg-white dark:bg-[#131724]">
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80" alt="Bahaa M." class="w-12 h-12 rounded-xl object-cover ring-2 ring-sky-500 shrink-0">
+              <div class="flex-1 min-w-0">
+                <span class="text-[9px] font-mono uppercase text-sky-600 dark:text-sky-400 font-bold tracking-wider">Account Head</span>
+                <h4 class="font-bold text-slate-900 dark:text-white text-sm truncate">Bahaa M.</h4>
+                <p class="text-[10px] text-slate-500">Operations Manager (OM)</p>
+              </div>
+              <div class="text-right font-mono">
+                <div class="text-[9px] text-slate-400">Score</div>
+                <div class="text-xs font-bold text-emerald-600 dark:text-emerald-400">96.8%</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Connecting Trunk -->
+          <div class="w-0.5 h-7 bg-sky-500/60 my-0.5"></div>
+          <div class="w-[1100px] h-0.5 bg-slate-300 dark:bg-slate-700 relative">
+            <div class="absolute left-16 -top-1 w-0.5 h-3 bg-slate-300 dark:bg-slate-700"></div>
+            <div class="absolute left-1/2 -top-1 -translate-x-1/2 w-0.5 h-3 bg-slate-300 dark:bg-slate-700"></div>
+            <div class="absolute right-16 -top-1 w-0.5 h-3 bg-slate-300 dark:bg-slate-700"></div>
+          </div>
+
+          <!-- LEVEL 2: OPERATIONS SUPERVISORS (3 Pods) -->
+          <div class="w-full flex justify-between px-4 mt-2 space-x-6">
+            
+            <!-- SUPERVISOR 1: Voice Operations (Tamer Farouk) -->
+            <div class="flex flex-col items-center flex-1">
+              <div onclick="openPersonModal('sup-tamer')" class="cursor-pointer apple-card apple-card-hover rounded-2xl p-3.5 w-72 hover:border-emerald-500">
+                <div class="flex items-center space-x-3">
+                  <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80" alt="Tamer Farouk" class="w-10 h-10 rounded-xl object-cover ring-1 ring-emerald-500 shrink-0">
+                  <div class="min-w-0 flex-1">
+                    <span class="text-[8px] font-mono text-emerald-600 dark:text-emerald-400 uppercase font-bold">Voice Operations</span>
+                    <h5 class="font-bold text-slate-900 dark:text-white text-xs truncate">Tamer Farouk</h5>
+                    <p class="text-[10px] text-slate-500">Voice Ops Supervisor</p>
+                  </div>
+                  <span class="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400">92.4%</span>
+                </div>
+                <div class="mt-2 pt-2 border-t border-slate-100 dark:border-white/[0.06] flex justify-between text-[9px] font-mono text-slate-500">
+                  <span>Shift SLA: 87.8%</span>
+                  <span class="text-emerald-600 dark:text-emerald-400">Occupancy 82%</span>
+                </div>
+              </div>
+
+              <!-- Lines to Voice TLs -->
+              <div class="w-0.5 h-5 bg-slate-300 dark:bg-slate-700 my-0.5"></div>
+              <div class="w-72 h-0.5 bg-slate-300 dark:bg-slate-700 relative">
+                <div class="absolute left-8 -top-1 w-0.5 h-2.5 bg-slate-300 dark:bg-slate-700"></div>
+                <div class="absolute right-8 -top-1 w-0.5 h-2.5 bg-slate-300 dark:bg-slate-700"></div>
+              </div>
+
+              <!-- Level 3 TLs under Tamer -->
+              <div class="flex justify-between space-x-4 mt-1.5">
+                
+                <!-- TL Ahmed (Alpha) -->
+                <div class="flex flex-col items-center">
+                  <div onclick="openPersonModal('tl-ahmed')" class="cursor-pointer apple-card apple-card-hover rounded-xl p-2.5 w-36 text-center">
+                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80" class="w-7 h-7 rounded-lg object-cover mx-auto ring-1 ring-slate-200">
+                    <div class="text-xs font-bold text-slate-900 dark:text-white mt-1 truncate">Ahmed H.</div>
+                    <div class="text-[8px] font-mono text-slate-500">TL Alpha Pod</div>
+                    <div class="text-[9px] text-emerald-600 dark:text-emerald-400 font-mono font-bold mt-0.5">338s AHT</div>
+                  </div>
+                  <!-- Agents under Ahmed -->
+                  <div class="w-0.5 h-3 bg-slate-300 dark:bg-slate-700"></div>
+                  <div class="space-y-1.5">
+                    <div onclick="openPersonModal('agent-karim')" class="cursor-pointer apple-card apple-card-hover rounded-lg p-2 w-32 text-center">
+                      <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&auto=format&fit=crop&q=80" class="w-6 h-6 rounded-md object-cover mx-auto">
+                      <div class="text-[10px] font-bold text-slate-900 dark:text-white truncate mt-0.5">Karim Adel</div>
+                      <div class="text-[8px] text-emerald-600 dark:text-emerald-400 font-mono">SME Alpha • QA 96%</div>
+                    </div>
+                    <div onclick="openPersonModal('agent-ziad')" class="cursor-pointer apple-card apple-card-hover rounded-lg p-2 w-32 text-center">
+                      <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&auto=format&fit=crop&q=80" class="w-6 h-6 rounded-md object-cover mx-auto">
+                      <div class="text-[10px] font-bold text-slate-900 dark:text-white truncate mt-0.5">Ziad Mostafa</div>
+                      <div class="text-[8px] text-emerald-600 dark:text-emerald-400 font-mono">Agent (95%)</div>
+                    </div>
+                    <div onclick="openPersonModal('agent-hassan')" class="cursor-pointer apple-card apple-card-hover rounded-lg p-2 w-32 text-center"><img src="https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=100&auto=format&fit=crop&q=80" class="w-6 h-6 rounded-md object-cover mx-auto"><div class="text-[10px] font-bold text-slate-900 dark:text-white truncate mt-0.5">Hassan Badr</div><div class="text-[8px] text-sky-600 dark:text-sky-400 font-mono">Agent • SLA 94%</div></div>
+                  </div>
+                </div>
+
+                <!-- TL Sarah (Falcon - Alert) -->
+                <div class="flex flex-col items-center">
+                  <div onclick="openPersonModal('tl-sarah')" class="cursor-pointer apple-card apple-card-hover rounded-xl p-2.5 w-36 text-center border-rose-300 dark:border-rose-500/40 bg-rose-50/30 dark:bg-rose-950/20">
+                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&auto=format&fit=crop&q=80" class="w-7 h-7 rounded-lg object-cover mx-auto ring-1 ring-rose-500">
+                    <div class="text-xs font-bold text-slate-900 dark:text-white mt-1 truncate">Sarah M.</div>
+                    <div class="text-[8px] font-mono text-rose-600 dark:text-rose-300 font-bold">TL Falcon (Alert)</div>
+                    <div class="text-[9px] text-rose-600 dark:text-rose-400 font-mono font-bold mt-0.5">410s AHT &uarr;</div>
+                  </div>
+                  <!-- Agents under Sarah -->
+                  <div class="w-0.5 h-3 bg-slate-300 dark:bg-slate-700"></div>
+                  <div class="space-y-1.5">
+                    <div onclick="openPersonModal('agent-mariam')" class="cursor-pointer apple-card apple-card-hover rounded-lg p-2 w-32 text-center border-rose-300 dark:border-rose-500/30 bg-rose-50/40">
+                      <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&auto=format&fit=crop&q=80" class="w-6 h-6 rounded-md object-cover mx-auto ring-1 ring-rose-400">
+                      <div class="text-[10px] font-bold text-rose-700 dark:text-rose-300 truncate mt-0.5">Mariam Y.</div>
+                      <div class="text-[8px] text-rose-600 dark:text-rose-400 font-mono font-bold">Aux Drift (82%)</div>
+                    </div>
+                    <div onclick="openPersonModal('agent-tarek')" class="cursor-pointer apple-card apple-card-hover rounded-lg p-2 w-32 text-center">
+                      <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80" class="w-6 h-6 rounded-md object-cover mx-auto">
+                      <div class="text-[10px] font-bold text-slate-900 dark:text-white truncate mt-0.5">Tarek Fathy</div>
+                      <div class="text-[8px] text-amber-600 font-mono">SME Falcon • QA 85%</div>
+                    </div>
+                    <div onclick="openPersonModal('agent-nouran')" class="cursor-pointer apple-card apple-card-hover rounded-lg p-2 w-32 text-center">
+                      <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&auto=format&fit=crop&q=80" class="w-6 h-6 rounded-md object-cover mx-auto">
+                      <div class="text-[10px] font-bold text-slate-900 dark:text-white truncate mt-0.5">Nouran Ezzat</div>
+                      <div class="text-[8px] text-slate-500 font-mono">Billing Rep</div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- SUPERVISOR 2: Digital Operations (Nour El-Din) -->
+            <div class="flex flex-col items-center flex-1">
+              <div onclick="openPersonModal('sup-nour')" class="cursor-pointer apple-card apple-card-hover rounded-2xl p-3.5 w-72 hover:border-sky-500">
+                <div class="flex items-center space-x-3">
+                  <img src="https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150&auto=format&fit=crop&q=80" alt="Nour El-Din" class="w-10 h-10 rounded-xl object-cover ring-1 ring-sky-500 shrink-0">
+                  <div class="min-w-0 flex-1">
+                    <span class="text-[8px] font-mono text-sky-600 dark:text-sky-400 uppercase font-bold">Digital Ops</span>
+                    <h5 class="font-bold text-slate-900 dark:text-white text-xs truncate">Nour El-Din</h5>
+                    <p class="text-[10px] text-slate-500">Digital & QA Supervisor</p>
+                  </div>
+                  <span class="text-xs font-mono font-bold text-sky-600 dark:text-sky-400">94.8%</span>
+                </div>
+                <div class="mt-2 pt-2 border-t border-slate-100 dark:border-white/[0.06] flex justify-between text-[9px] font-mono text-slate-500">
+                  <span>Concurrency: 2.4x</span>
+                  <span class="text-sky-600 dark:text-sky-400">CSAT 94%</span>
+                </div>
+              </div>
+
+              <!-- Lines to Digital TLs -->
+              <div class="w-0.5 h-5 bg-slate-300 dark:bg-slate-700 my-0.5"></div>
+              <div class="w-72 h-0.5 bg-slate-300 dark:bg-slate-700 relative">
+                <div class="absolute left-8 -top-1 w-0.5 h-2.5 bg-slate-300 dark:bg-slate-700"></div>
+                <div class="absolute right-8 -top-1 w-0.5 h-2.5 bg-slate-300 dark:bg-slate-700"></div>
+              </div>
+
+              <!-- Level 3 TLs under Nour -->
+              <div class="flex justify-between space-x-4 mt-1.5">
+                
+                <!-- TL Omar (Rapid Chat) -->
+                <div class="flex flex-col items-center">
+                  <div onclick="openPersonModal('tl-omar')" class="cursor-pointer apple-card apple-card-hover rounded-xl p-2.5 w-36 text-center">
+                    <img src="https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&auto=format&fit=crop&q=80" class="w-7 h-7 rounded-lg object-cover mx-auto ring-1 ring-slate-200">
+                    <div class="text-xs font-bold text-slate-900 dark:text-white mt-1 truncate">Omar K.</div>
+                    <div class="text-[8px] font-mono text-slate-500">TL Chat</div>
+                    <div class="text-[9px] text-sky-600 dark:text-sky-400 font-mono font-bold mt-0.5">325s AHT</div>
+                  </div>
+                  <!-- Agents under Omar -->
+                  <div class="w-0.5 h-3 bg-slate-300 dark:bg-slate-700"></div>
+                  <div class="space-y-1.5">
+                    <div onclick="openPersonModal('agent-heba')" class="cursor-pointer apple-card apple-card-hover rounded-lg p-2 w-32 text-center">
+                      <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80" class="w-6 h-6 rounded-md object-cover mx-auto">
+                      <div class="text-[10px] font-bold text-slate-900 dark:text-white truncate mt-0.5">Heba Tarek</div>
+                      <div class="text-[8px] text-sky-600 dark:text-sky-400 font-mono">SME Chat • QA 94%</div>
+                    </div>
+                    <div onclick="openPersonModal('agent-salma')" class="cursor-pointer apple-card apple-card-hover rounded-lg p-2 w-32 text-center">
+                      <img src="https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?w=100&auto=format&fit=crop&q=80" class="w-6 h-6 rounded-md object-cover mx-auto">
+                      <div class="text-[10px] font-bold text-slate-900 dark:text-white truncate mt-0.5">Salma Helmy</div>
+                      <div class="text-[8px] text-emerald-600 font-mono">Agent (97%)</div>
+                    </div>
+                    <div onclick="openPersonModal('agent-dina')" class="cursor-pointer apple-card apple-card-hover rounded-lg p-2 w-32 text-center"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" class="w-6 h-6 rounded-md object-cover mx-auto"><div class="text-[10px] font-bold text-slate-900 dark:text-white truncate mt-0.5">Dina Samir</div><div class="text-[8px] text-emerald-600 font-mono">QA Agent • 98%</div></div>
+                  </div>
+                </div>
+
+                <!-- TL Mona (QA Calibration Lead) -->
+                <div class="flex flex-col items-center">
+                  <div onclick="openPersonModal('tl-mona')" class="cursor-pointer apple-card apple-card-hover rounded-xl p-2.5 w-36 text-center">
+                    <img src="https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?w=100&auto=format&fit=crop&q=80" class="w-7 h-7 rounded-lg object-cover mx-auto ring-1 ring-emerald-500">
+                    <div class="text-xs font-bold text-slate-900 dark:text-white mt-1 truncate">Mona Aly</div>
+                    <div class="text-[8px] font-mono text-emerald-600 dark:text-emerald-400 font-bold">QA Lead</div>
+                    <div class="text-[9px] text-emerald-600 dark:text-emerald-400 font-mono font-bold mt-0.5">98% Audits</div>
+                  </div>
+                  <!-- Agents under Mona -->
+                  <div class="w-0.5 h-3 bg-slate-300 dark:bg-slate-700"></div>
+                  <div class="space-y-1.5">
+                    <div onclick="openPersonModal('agent-dina')" class="cursor-pointer apple-card apple-card-hover rounded-lg p-2 w-32 text-center">
+                      <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" class="w-6 h-6 rounded-md object-cover mx-auto">
+                      <div class="text-[10px] font-bold text-slate-900 dark:text-white truncate mt-0.5">Dina Samir</div>
+                      <div class="text-[8px] text-emerald-600 font-mono">QA Auditor (98%)</div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- SUPERVISOR 3: Escalations & Quality (Layla Sherif) -->
+            <div class="flex flex-col items-center flex-1">
+              <div onclick="openPersonModal('sup-layla')" class="cursor-pointer apple-card apple-card-hover rounded-2xl p-3.5 w-72 hover:border-amber-500">
+                <div class="flex items-center space-x-3">
+                  <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=150&auto=format&fit=crop&q=80" alt="Layla Sherif" class="w-10 h-10 rounded-xl object-cover ring-1 ring-amber-500 shrink-0">
+                  <div class="min-w-0 flex-1">
+                    <span class="text-[8px] font-mono text-amber-600 dark:text-amber-400 uppercase font-bold">Escalations</span>
+                    <h5 class="font-bold text-slate-900 dark:text-white text-xs truncate">Layla Sherif</h5>
+                    <p class="text-[10px] text-slate-500">Tier-2 Escalations Lead</p>
+                  </div>
+                  <span class="text-xs font-mono font-bold text-amber-600 dark:text-amber-400">95.2%</span>
+                </div>
+                <div class="mt-2 pt-2 border-t border-slate-100 dark:border-white/[0.06] flex justify-between text-[9px] font-mono text-slate-500">
+                  <span>Dispute SLA: 98%</span>
+                  <span class="text-amber-600 dark:text-amber-400">FCR 96%</span>
+                </div>
+              </div>
+
+              <!-- Lines to Escalation TL -->
+              <div class="w-0.5 h-5 bg-slate-300 dark:bg-slate-700 my-0.5"></div>
+              
+              <!-- Level 3 TL Karim Fouad -->
+              <div class="flex flex-col items-center mt-1.5">
+                <div onclick="openPersonModal('tl-fouad')" class="cursor-pointer apple-card apple-card-hover rounded-xl p-2.5 w-36 text-center">
+                  <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&auto=format&fit=crop&q=80" class="w-7 h-7 rounded-lg object-cover mx-auto ring-1 ring-amber-500">
+                  <div class="text-xs font-bold text-slate-900 dark:text-white mt-1 truncate">Karim F.</div>
+                  <div class="text-[8px] font-mono text-amber-600 dark:text-amber-400 font-bold">TL Escalations</div>
+                  <div class="text-[9px] text-emerald-600 dark:text-emerald-400 font-mono font-bold mt-0.5">FCR 94%</div>
+                </div>
+                <!-- Agents under Karim -->
+                <div class="w-0.5 h-3 bg-slate-300 dark:bg-slate-700"></div>
+                <div class="space-y-1.5">
+                  <div onclick="openPersonModal('agent-amr')" class="cursor-pointer apple-card apple-card-hover rounded-lg p-2 w-32 text-center">
+                    <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80" class="w-6 h-6 rounded-md object-cover mx-auto">
+                    <div class="text-[10px] font-bold text-slate-900 dark:text-white truncate mt-0.5">Amr Nabil</div>
+                    <div class="text-[8px] text-amber-600 font-mono">SME Escalations • FCR 94%</div>
+                  </div>
+                  <div onclick="openPersonModal('agent-hassan')" class="cursor-pointer apple-card apple-card-hover rounded-lg p-2 w-32 text-center">
+                    <img src="https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=100&auto=format&fit=crop&q=80" class="w-6 h-6 rounded-md object-cover mx-auto">
+                    <div class="text-[10px] font-bold text-slate-900 dark:text-white truncate mt-0.5">Hassan Badr</div>
+                    <div class="text-[8px] text-slate-500 font-mono">Omni Specialist</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ======================================================= -->
+  <!-- CENTER MODAL 1: SMART PERSONNEL DOSSIER CARD            -->
+  <!-- ======================================================= -->
+  <div id="person-dossier-modal" class="no-print fixed inset-0 z-50 bg-black/60 dark:bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="report-host apple-card rounded-3xl w-full max-w-3xl max-h-[92vh] overflow-y-auto shadow-2xl p-6 space-y-5 bg-white dark:bg-[#0e121a] text-slate-900 dark:text-slate-100 transition-all border border-slate-200 dark:border-white/15">
+      
+      <button class="numi-dot" data-numi="person" onclick="numi38(event,this)"><span class="eye l"></span><span class="eye r"></span><span class="smile"></span></button><div class="numi-box" data-box="person"><div class="numi-txt"></div><div class="numi-qs"></div></div>
+      <!-- Top Row of Dossier Card: Photo, Name, Title, Assigned to Who, Perform %, QA %, Export -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-white/[0.08]">
+        <div class="flex items-center space-x-3.5">
+          <img id="dossier-photo" src="" alt="Profile Photo" class="w-14 h-14 rounded-2xl object-cover ring-2 ring-sky-500 shrink-0 shadow-sm">
+          <div>
+            <div class="flex items-center space-x-2">
+              <h3 id="dossier-name" class="text-lg font-bold text-slate-900 dark:text-white">Name</h3>
+              <span id="dossier-assigned" class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-100 dark:bg-white/5 text-sky-600 dark:text-sky-400 border border-slate-200 dark:border-white/10 font-medium">
+                Assigned
+              </span>
+            </div>
+            <p id="dossier-title" class="text-xs text-slate-500 mt-0.5 font-medium">Role Title</p>
+            <p id="dossier-note" class="text-[11px] text-amber-700 dark:text-amber-300 mt-1 font-medium flex items-center gap-1.5">
+              <i class="fa-solid fa-note-sticky text-[10px]"></i>
+              <span id="dossier-note-text">Coaching note</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-3">
+          <div class="text-right">
+            <div class="text-[9px] font-mono text-slate-400 uppercase">Operational KPIs</div>
+            <div id="dossier-perf-val" class="text-lg font-mono font-bold text-emerald-600 dark:text-emerald-400">--</div>
+          </div>
+          <div class="text-right">
+            <div class="text-[9px] font-mono text-slate-400 uppercase">QA Score</div>
+            <div id="dossier-qa-val" class="text-lg font-mono font-bold text-slate-900 dark:text-white">--</div>
+          </div>
+          <button onclick="exportSingleDossier()" title="Export Profile Dossier PDF" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 flex items-center justify-center transition">
+            <i class="fa-solid fa-file-pdf text-rose-500 text-xs"></i>
+          </button>
+          <button onclick="closePersonModal()" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 flex items-center justify-center transition">
+            <i class="fa-solid fa-xmark text-xs"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- 4-Week Historical KPI Trajectory Chart -->
+      <div class="apple-card rounded-2xl p-4 bg-slate-50/70 dark:bg-white/[0.02]">
+        <div class="flex items-center justify-between mb-2 text-xs">
+          <span class="font-bold text-slate-900 dark:text-white flex items-center gap-1.5 font-mono">
+            <i class="fa-solid fa-chart-line text-sky-600 dark:text-sky-400"></i>
+            <span>4-Week Historical KPI Trajectory (Current vs Previous Week)</span>
+          </span>
+          <span class="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 font-bold" id="dossier-chart-delta">+4.2% Longitudinal Gain</span>
+        </div>
+        <div class="relative h-44 w-full">
+          <canvas id="dossierHistoryChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Comparative KPIs & Coaching Note side-by-side with Longitudinal AI Note -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        
+        <!-- Left: Human Coaching History Log Folder -->
+        <div class="space-y-2.5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5 font-mono uppercase">
+              <i class="fa-solid fa-user-pen text-amber-500 text-xs"></i>
+              <span>Operational Notes & History</span>
+            </span>
+            <span class="text-[10px] font-mono text-slate-400" id="dossier-log-count">0 Entries</span>
+          </div>
+
+          <div class="space-y-1.5 max-h-44 overflow-y-auto pr-1" id="dossier-history-list">
+            <!-- Populated via JS -->
+          </div>
+
+          <div class="pt-1 flex items-center space-x-2">
+            <input type="text" id="dossier-new-note" placeholder="Log new coaching note..." class="flex-1 bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-1.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-sky-500">
+            <button onclick="addDossierNote()" class="px-3.5 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-xs font-semibold text-white transition">
+              Log
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Longitudinal Coaching Impact & AI Note -->
+        <div class="space-y-2.5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5 font-mono uppercase">
+              <i class="fa-solid fa-brain text-sky-600 dark:text-sky-400 text-xs"></i>
+              <span>AI Operational Context</span>
+            </span>
+            <span class="text-[9px] font-mono px-2 py-0.5 rounded bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-200 dark:border-sky-500/20 font-bold">TELEMETRY AI</span>
+          </div>
+
+          <!-- Role-Specific Comparative KPIs Grid -->
+          <div class="grid grid-cols-2 gap-2" id="dossier-kpi-subgrid">
+            <!-- Populated via JS -->
+          </div>
+
+          <div class="pt-2"><div class="analytics-periods39" data-periods39="profile"><button class="period39 active" onclick="setPeriod39('profile','day',this)">Previous Day</button><button class="period39" onclick="setPeriod39('profile','week',this)">Last Week</button><button class="period39" onclick="setPeriod39('profile','month',this)">Last Month</button><button class="period39" onclick="setPeriod39('profile','six',this)">Last 6 Months</button><button class="period39" onclick="setPeriod39('profile','overall',this)">Overall</button></div><div class="analytics39 unroll-host max-h-80" id="analytics39-profile"><div class="analytics39-card unroll-section unrolled"><div class="text-[9px] font-mono text-sky-600 font-bold">SELECTED ROLE KPI</div><div class="analytics39-chart" data-chart39="profile-line"></div></div><div class="analytics39-card unroll-section"><div class="text-[9px] font-mono text-sky-600 font-bold">PERIOD DELTA</div><div class="analytics39-chart" data-chart39="profile-bars"></div></div></div></div>
+          <!-- AI Longitudinal Coaching Note Box -->
+          <div class="p-3 rounded-xl bg-sky-50/60 dark:bg-black/40 border border-sky-200 dark:border-sky-500/20 text-xs text-slate-700 dark:text-slate-300 space-y-1">
+            <div class="text-[10px] font-mono text-sky-700 dark:text-sky-400 font-bold flex items-center justify-between">
+              <span>// OPERATIONAL CONTEXT SUMMARY:</span>
+              <span class="text-emerald-600 dark:text-emerald-400 font-bold" id="dossier-ai-tag">POSITIVE ROI</span>
+            </div>
+            <p id="dossier-ai-analysis" class="text-[11px] leading-relaxed">
+              Analysis text here...
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="pt-2 border-t border-slate-100 dark:border-white/[0.08] flex justify-between items-center">
+        <button onclick="exportSingleDossier()" class="text-xs font-semibold text-sky-600 dark:text-sky-400 hover:underline flex items-center gap-1">
+          <i class="fa-solid fa-file-pdf"></i>
+          <span>Print Individual Personnel Dossier</span>
+        </button>
+        <button onclick="closePersonModal()" class="px-4 py-1.5 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-xs font-semibold text-slate-700 dark:text-slate-300 transition">
+          Close Dossier
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CENTER MODAL 2: HISTORICAL METRIC DRILLDOWN & FORENSICS -->
+  <div id="kpi-drilldown-modal" class="no-print fixed inset-0 z-50 bg-black/60 dark:bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="report-host apple-card rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl p-6 space-y-5 bg-white dark:bg-[#0e121a] text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-white/15">
+      
+      <button class="numi-dot" data-numi="metric" onclick="numi38(event,this)"><span class="eye l"></span><span class="eye r"></span><span class="smile"></span></button><div class="numi-box" data-box="metric"><div class="numi-txt"></div><div class="numi-qs"></div></div>
+      <div class="flex items-start justify-between pb-3 border-b border-slate-100 dark:border-white/10">
+        <div>
+          <span class="text-[10px] font-mono text-sky-600 dark:text-sky-400 uppercase font-bold tracking-wider">Historical Comparison & Root-Cause Forensic</span>
+          <h3 id="drilldown-title" class="text-lg font-bold text-slate-900 dark:text-white mt-0.5">Floor AHT Deep-Dive</h3>
+        </div>
+        <button onclick="closeMetricDrillDown()" class="w-8 h-8 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-500 hover:text-slate-900 dark:hover:text-white flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark text-xs"></i>
+        </button>
+      </div>
+
+      <div class="apple-card rounded-2xl p-4 bg-slate-50 dark:bg-white/[0.02]">
+        <div class="flex items-center justify-between mb-2 text-xs">
+          <span class="font-bold text-slate-800 dark:text-slate-200">7-Day Variance Curve</span>
+          <span class="text-[10px] font-mono text-sky-600 dark:text-sky-400">Current Week vs Baseline</span>
+        </div>
+        <div class="relative h-48 w-full">
+          <canvas id="drillDownHistoryCanvas"></canvas>
+        </div>
+      </div>
+
+      <div class="analytics-periods39" data-periods39="metric"><button class="period39 active" onclick="setPeriod39('metric','day',this)">Previous Day</button><button class="period39" onclick="setPeriod39('metric','week',this)">Last Week</button><button class="period39" onclick="setPeriod39('metric','month',this)">Last Month</button><button class="period39" onclick="setPeriod39('metric','six',this)">Last 6 Months</button><button class="period39" onclick="setPeriod39('metric','overall',this)">Overall</button></div>
+      <div class="analytics39 unroll-host" id="analytics39-metric"><div class="analytics39-card unroll-section unrolled"><div class="text-[9px] font-mono text-sky-600 font-bold">TREND COMPARISON</div><div class="analytics39-chart" data-chart39="metric-line"></div></div><div class="analytics39-card unroll-section"><div class="text-[9px] font-mono text-sky-600 font-bold">VARIANCE</div><div class="analytics39-chart" data-chart39="metric-bars"></div></div><div class="analytics39-card unroll-section"><div class="text-[9px] font-mono text-sky-600 font-bold">TARGET & RELATED SIGNALS</div><div data-related39="metric" class="grid grid-cols-2 md:grid-cols-4 gap-2 mt-3"></div></div></div>
+      <div class="p-4 rounded-2xl bg-sky-50/50 dark:bg-black/40 border border-sky-200 dark:border-sky-500/30 space-y-2 text-xs">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-slate-900 dark:text-white flex items-center gap-1.5 font-mono uppercase">
+            <i class="fa-solid fa-robot text-sky-600 dark:text-sky-400 text-xs"></i>
+            <span>AI Anomaly Forensic Report</span>
+          </span>
+          <span id="drilldown-badge" class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-500/30">
+            ANOMALY DETECTED
+          </span>
+        </div>
+
+        <div id="drilldown-explanation" class="text-slate-600 dark:text-slate-300 leading-relaxed space-y-1.5 pt-1 text-[11px]">
+          <!-- Dynamic AI explanation -->
+        </div>
+      </div>
+
+      <div class="pt-2 border-t border-slate-100 dark:border-white/10 flex justify-between items-center">
+        <button onclick="triggerFastExport()" class="text-xs font-semibold text-sky-600 dark:text-sky-400 hover:underline flex items-center gap-1">
+          <i class="fa-solid fa-file-pdf"></i>
+          <span>Export Analysis PDF</span>
+        </button>
+        <button onclick="closeMetricDrillDown()" class="px-4 py-1.5 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-xs font-medium text-slate-700 dark:text-slate-300 transition">
+          Close
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="ticket-quality38" class="fixed inset-0 z-50 bg-black/60 dark:bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4"><div class="report-host apple-card rounded-3xl w-full max-w-3xl max-h-[92vh] overflow-y-auto p-6 space-y-4 bg-white dark:bg-[#0e121a]"><button class="numi-dot" data-numi="ticket" onclick="numi38(event,this)"><span class="eye l"></span><span class="eye r"></span><span class="smile"></span></button><div class="numi-box" data-box="ticket"><div class="numi-txt"></div><div class="numi-qs"></div></div><button onclick="closeTicket38()" class="float-right w-8 h-8 rounded-lg bg-slate-100 dark:bg-white/5">×</button><div><div class="text-[9px] font-mono text-sky-600 font-bold">INTERACTION QUALITY REPORT</div><h3 id="t38-title" class="text-lg font-bold"></h3><p id="t38-sub" class="text-[10px] text-slate-500"></p></div><div id="t38-stats" class="ticket-stats38"></div><div class="grid grid-cols-1 md:grid-cols-2 gap-3"><div class="apple-card rounded-2xl p-4"><h4 class="text-xs font-bold">Timing composition</h4><div id="t38-chart" class="h-44"></div></div><div class="apple-card rounded-2xl p-4"><h4 class="text-xs font-bold">Quality scorecard</h4><div id="t38-quality" class="space-y-3 mt-3"></div></div></div><div class="analytics-periods39" data-periods39="ticket"><button class="period39 active" onclick="setPeriod39('ticket','day',this)">Previous Day</button><button class="period39" onclick="setPeriod39('ticket','week',this)">Last Week</button><button class="period39" onclick="setPeriod39('ticket','month',this)">Last Month</button><button class="period39" onclick="setPeriod39('ticket','overall',this)">Overall</button></div><div class="analytics39 unroll-host max-h-72" id="analytics39-ticket"><div class="analytics39-card unroll-section unrolled"><div class="text-[9px] font-mono text-sky-600 font-bold">TICKET QUALITY HISTORY</div><div class="analytics39-chart" data-chart39="ticket-line"></div></div><div class="analytics39-card unroll-section"><div class="text-[9px] font-mono text-sky-600 font-bold">TIMING DELTA</div><div class="analytics39-chart" data-chart39="ticket-bars"></div></div></div><div class="p-3 rounded-2xl bg-sky-50 dark:bg-sky-500/10"><b class="text-[9px] font-mono text-sky-600">NUMI CONTEXT</b><p id="t38-note" class="text-[11px] mt-1"></p></div><div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-white/10"><button class="v41-report-btn no-print" onclick="printV41('ticket-quality38')"><i class="fa-solid fa-file-pdf text-rose-500"></i> Export Ticket PDF</button><button class="no-print px-4 py-1.5 rounded-xl bg-slate-100 dark:bg-white/5 text-xs" onclick="closeTicket38()">Close</button></div></div></div>
+  <button id="sound-toggle39" class="sound-toggle39 no-print" onclick="toggleSound39()" title="Toggle interface sounds">♪</button>
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="no-print fixed bottom-6 right-6 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+  <!-- ======================================================= -->
+  <!-- JAVASCRIPT STATE ENGINE, CHARTS & CONTROLLERS           -->
+  <!-- ======================================================= -->
+  <script>
+    const STATE = {
+      isDark: false,
+      activeScreen: 'screen-overview',
+      comparisonMode: 'dod',
+      ticketsVolume: 2418,
+      streamPaused: false,
+      streamTimer: null,
+      activeDossierKey: 'om-bahaa',
+
+      // Pan & Zoom Tree Canvas State
+      treeZoom: 1,
+      treePanX: 0,
+      treePanY: 0,
+      isPanning: false,
+      panStartX: 0,
+      panStartY: 0,
+
+      dossiers: {
+        // TIER 1: OM
+        'om-bahaa': {
+          name: "Bahaa M.",
+          title: "Operations Manager (OM) - Account Head",
+          assigned: "Account Director",
+          photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+          note: "High focus: Normalizing Pod Falcon billing AHT spike and sustaining 85/20 SLA.",
+          perf: "96.8%",
+          qa: "94.2%",
+          chartDelta: "+4.2% vs Last Week",
+          trendCurrent: [92, 94, 93, 95, 96, 96, 96.8],
+          trendPast: [90, 91, 91.5, 92, 92.5, 93, 93.4],
+          history: [
+            { date: "Yesterday 16:30", text: "Approved revised auxiliary schedule allocations for Falcon and Alpha voice pods." },
+            { date: "15 Sep 2026", text: "Conducted quarterly executive governance calibration with Client VP of Operations." },
+            { date: "10 Sep 2026", text: "Reviewed attrition prevention metrics; floor turnover remains at record low 1.8%." }
+          ],
+          kpis: [
+            { label: "Account SLA", val: "88.4%", delta: "+2.1% DoD", good: true },
+            { label: "Floor CSAT", val: "91.2%", delta: "+1.6% DoD", good: true },
+            { label: "Blended AHT", val: "372s", delta: "+24s DoD", good: false },
+            { label: "Shrinkage", val: "14.8%", delta: "-0.9% DoD", good: true }
+          ],
+          aiTag: "ACCOUNT CONTEXT",
+          aiAnalysis: "Longitudinal telemetry indicates strong leadership resilience. Floor SLA consistently exceeds contract by +3.4%. Primary operational friction is isolated to Team Falcon's hold times on technical billing escalations."
+        },
+
+        // TIER 2: OPS SUPERVISORS
+        'sup-tamer': {
+          name: "Tamer Farouk",
+          title: "Voice Operations Supervisor",
+          assigned: "Bahaa M. (OM)",
+          photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+          note: "Managing Alpha and Falcon voice pods (26 representatives).",
+          perf: "92.4%",
+          qa: "91.8%",
+          chartDelta: "+1.8% vs Last Week",
+          trendCurrent: [88, 89, 90, 91, 91.5, 92, 92.4],
+          trendPast: [87, 88, 88.5, 89, 89.5, 90, 90.6],
+          history: [
+            { date: "Yesterday", text: "Issued auxiliary adherence counseling for Pod Falcon representatives." },
+            { date: "14 Sep 2026", text: "Implemented call pacing protocol during 13:00-15:00 peak interval." }
+          ],
+          kpis: [
+            { label: "Voice SLA", val: "87.8%", delta: "+1.4% DoD", good: true },
+            { label: "Voice AHT", val: "368s", delta: "+16s DoD", good: false },
+            { label: "Occupancy", val: "82.4%", delta: "+0.5% DoD", good: true },
+            { label: "TL Coaching", val: "96.0%", delta: "+2.0% WoW", good: true }
+          ],
+          aiTag: "COACHING ACTIVITY",
+          aiAnalysis: "Supervisory interventions have stabilized midday queue backlogs. Coaching frequency adheres 100% to cadence; action item is reinforcing hold flowchart adherence in Team Falcon."
+        },
+
+        'sup-nour': {
+          name: "Nour El-Din",
+          title: "Digital & QA Operations Supervisor",
+          assigned: "Bahaa M. (OM)",
+          photo: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=150&auto=format&fit=crop&q=80",
+          note: "Leading Rapid Chat, Omnichannel emails, and QA calibration.",
+          perf: "94.8%",
+          qa: "96.2%",
+          chartDelta: "+3.1% vs Last Week",
+          trendCurrent: [91, 92, 92.5, 93, 94, 94.5, 94.8],
+          trendPast: [89, 90, 90.5, 91, 91.2, 91.5, 91.7],
+          history: [
+            { date: "Yesterday", text: "Rolled out automated multi-chat macro shortcuts for Tier-1 inquiries." },
+            { date: "12 Sep 2026", text: "Calibrated QA matrix with OM Bahaa; variance dropped to 1.2%." }
+          ],
+          kpis: [
+            { label: "Chat Concurrency", val: "2.45x", delta: "+0.2x DoD", good: true },
+            { label: "Digital SLA", val: "95.4%", delta: "+0.8% DoD", good: true },
+            { label: "Digital CSAT", val: "93.8%", delta: "+1.2% WoW", good: true },
+            { label: "QA Calibration", val: "96.5%", delta: "+1.5% WoW", good: true }
+          ],
+          aiTag: "STABLE OPERATIONS",
+          aiAnalysis: "Digital pod performance is in the 95th percentile. Chat concurrency increased by 18% with zero degradation to CSAT or customer sentiment."
+        },
+
+        'sup-layla': {
+          name: "Layla Sherif",
+          title: "Escalations & Disputes Supervisor",
+          assigned: "Bahaa M. (OM)",
+          photo: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=150&auto=format&fit=crop&q=80",
+          note: "Overseeing VIP disputes, refund authorizations, and legal tickets.",
+          perf: "95.2%",
+          qa: "96.0%",
+          chartDelta: "+2.4% vs Last Week",
+          trendCurrent: [92, 93, 93.5, 94, 94.8, 95, 95.2],
+          trendPast: [90, 91, 91.5, 92, 92.2, 92.6, 92.8],
+          history: [
+            { date: "Two days ago", text: "Reviewed high-value chargeback reversal procedures with finance." },
+            { date: "11 Sep 2026", text: "Reduced Tier-2 resolution cycle time from 58m to 42m." }
+          ],
+          kpis: [
+            { label: "Dispute SLA", val: "98.0%", delta: "+0.5% DoD", good: true },
+            { label: "Escalation FCR", val: "96.0%", delta: "+1.8% WoW", good: true },
+            { label: "Resolution Time", val: "42m", delta: "-8m DoD", good: true },
+            { label: "Adherence", val: "96.5%", delta: "+0.4% WoW", good: true }
+          ],
+          aiTag: "DISPUTE CONTEXT",
+          aiAnalysis: "Escalation team exhibits 96% first-touch dispute resolution. Zero client escalations breached contract timelines over the trailing 30 days."
+        },
+
+        // TIER 3: TEAM LEADERS & QA LEAD
+        'tl-ahmed': {
+          name: "Ahmed Hassan",
+          title: "Team Leader - Voice Alpha Pod",
+          assigned: "Tamer Farouk (Supervisor)",
+          photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80",
+          note: "Alpha pod maintains lowest handle time variance floor-wide.",
+          perf: "95.1%",
+          qa: "93.4%",
+          chartDelta: "+2.0% vs Last Week",
+          trendCurrent: [91, 92, 93, 93.5, 94, 94.8, 95.1],
+          trendPast: [90, 90.5, 91, 91.5, 92, 92.8, 93.1],
+          history: [
+            { date: "Yesterday", text: "Commended Agent Karim for perfect quality audit score." }
+          ],
+          kpis: [
+            { label: "Pod AHT", val: "338s", delta: "-8s DoD", good: true },
+            { label: "Pod FCR", val: "82.1%", delta: "+1.5% WoW", good: true },
+            { label: "Adherence", val: "94.6%", delta: "+0.6% DoD", good: true },
+            { label: "Coaching ROI", val: "+14.2%", delta: "Consistent", good: true }
+          ],
+          aiTag: "CONSISTENT PERFORMANCE",
+          aiAnalysis: "Ahmed maintains high team morale and disciplined wrap-up times. Coaching sessions consistently yield measurable AHT reductions within 48 hours."
+        },
+
+        'tl-sarah': {
+          name: "Sarah Mansour",
+          title: "Team Leader - Voice Falcon Pod",
+          assigned: "Tamer Farouk (Supervisor)",
+          photo: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+          note: "Active coaching plan targeting billing hold time reduction.",
+          perf: "88.6%",
+          qa: "86.4%",
+          chartDelta: "-2.8% vs Last Week",
+          trendCurrent: [92, 91, 90, 89, 88.8, 88.6, 88.6],
+          trendPast: [90, 90.5, 91, 91.2, 91.4, 91.4, 91.4],
+          history: [
+            { date: "Yesterday", text: "Conducted 1-on-1 with Mariam Youssef regarding hold duration." },
+            { date: "15 Sep 2026", text: "Initiated co-pilot shadow session for onboarding billing agents." }
+          ],
+          kpis: [
+            { label: "Pod AHT", val: "410s", delta: "+38s DoD (Spike)", good: false },
+            { label: "Pod QA", val: "86.4%", delta: "-1.2% DoD", good: false },
+            { label: "Pod CSAT", val: "88.2%", delta: "-1.4% WoW", good: false },
+            { label: "Hold Time", val: "112s", delta: "+34s Spike", good: false }
+          ],
+          aiTag: "QUEUE EXCEPTION",
+          aiAnalysis: "While coaching was logged 48 hours ago, hold times actually expanded by 34s due to complex new router return policies. Co-pilot simulation recommended immediately."
+        },
+
+        'tl-omar': {
+          name: "Omar Khaled",
+          title: "Team Leader - Rapid Chat",
+          assigned: "Nour El-Din (Supervisor)",
+          photo: "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&auto=format&fit=crop&q=80",
+          note: "Optimizing 2.5x dual-ticket concurrency handling.",
+          perf: "93.5%",
+          qa: "94.2%",
+          chartDelta: "+2.2% vs Last Week",
+          trendCurrent: [89, 90, 91, 92, 92.5, 93, 93.5],
+          trendPast: [88, 88.5, 89, 90, 90.5, 91, 91.3],
+          history: [
+            { date: "Two days ago", text: "Trained agents on dual-session shortcut macros." }
+          ],
+          kpis: [
+            { label: "Chat AHT", val: "325s", delta: "-6s DoD", good: true },
+            { label: "Concurrency", val: "2.5x", delta: "+0.2x DoD", good: true },
+            { label: "First Response", val: "22s", delta: "-4s WoW", good: true },
+            { label: "Adherence", val: "95.0%", delta: "+0.5% DoD", good: true }
+          ],
+          aiTag: "DIGITAL QUEUE CONTEXT",
+          aiAnalysis: "Agent concurrency has grown smoothly. Coaching on intro macros trimmed 14 seconds from interaction start across all team members."
+        },
+
+        'tl-mona': {
+          name: "Mona Aly",
+          title: "Senior Quality Assurance Lead",
+          assigned: "Nour El-Din (Supervisor)",
+          photo: "https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?w=100&auto=format&fit=crop&q=80",
+          note: "Floor audit quota delivered at 100% (160 weekly audits).",
+          perf: "98.0%",
+          qa: "98.5%",
+          chartDelta: "+1.2% vs Last Week",
+          trendCurrent: [96, 96.5, 97, 97.2, 97.5, 98, 98.0],
+          trendPast: [95, 95.5, 96, 96.2, 96.5, 96.8, 96.8],
+          history: [
+            { date: "Yesterday", text: "Calibrated QA matrix with operations supervisors; zero fatal disputes." }
+          ],
+          kpis: [
+            { label: "Audit Delivery", val: "100%", delta: "On Target", good: true },
+            { label: "Variance Rate", val: "1.2%", delta: "-0.4% WoW", good: true },
+            { label: "Calibration", val: "96.5%", delta: "+1.5% WoW", good: true },
+            { label: "Coaching ROI", val: "+16.8%", delta: "Positive", good: true }
+          ],
+          aiTag: "QA CONTEXT",
+          aiAnalysis: "Quality scoring precision aligns with account guidelines. Fatal error detection rate improved by 40% after rolling out updated compliance scoring rubrics."
+        },
+
+        'tl-fouad': {
+          name: "Karim Fouad",
+          title: "Team Leader - Escalations",
+          assigned: "Layla Sherif (Supervisor)",
+          photo: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&auto=format&fit=crop&q=80",
+          note: "Managing complex disputes, chargebacks, and escalations.",
+          perf: "94.0%",
+          qa: "95.0%",
+          chartDelta: "+1.5% vs Last Week",
+          trendCurrent: [91, 91.5, 92, 93, 93.5, 93.8, 94.0],
+          trendPast: [90, 90.5, 91, 91.5, 92, 92.2, 92.5],
+          history: [
+            { date: "14 Sep 2026", text: "Updated refund authorization matrix." }
+          ],
+          kpis: [
+            { label: "Escalation FCR", val: "94.0%", delta: "+0.5% DoD", good: true },
+            { label: "Turnaround", val: "42m", delta: "-6m DoD", good: true },
+            { label: "Repeat Contact", val: "2.8%", delta: "-0.4% WoW", good: true },
+            { label: "Adherence", val: "95.0%", delta: "+0.5% WoW", good: true }
+          ],
+          aiTag: "ESCALATION CONTEXT",
+          aiAnalysis: "VIP and chargeback inquiries resolved 18% faster than previous monthly baseline. First contact resolution on disputed charges sustained at 94%."
+        },
+
+        // TIER 4: FRONTLINE SPECIALISTS & AGENTS
+        'agent-karim': {
+          name: "Karim Adel",
+          title: "Senior Voice Representative",
+          assigned: "Ahmed Hassan (TL Alpha)",
+          photo: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&auto=format&fit=crop&q=80",
+          note: "Top performer; self-reliant on technical voice queues.",
+          perf: "96.2%",
+          qa: "95.0%",
+          chartDelta: "+3.2% vs Last Week",
+          trendCurrent: [92, 93, 94, 94.5, 95, 96, 96.2],
+          trendPast: [90, 91, 91.5, 92, 92.5, 93, 93.0],
+          history: [
+            { date: "Yesterday", text: "Commended by TL Ahmed for 100% QA score on complex customer call." }
+          ],
+          kpis: [
+            { label: "Agent AHT", val: "320s", delta: "-14s DoD", good: true },
+            { label: "Customer CSAT", val: "95.0%", delta: "+1.2% WoW", good: true },
+            { label: "FCR Rate", val: "84.0%", delta: "+2.0% DoD", good: true },
+            { label: "Aux Adherence", val: "97.4%", delta: "+0.8% WoW", good: true }
+          ],
+          aiTag: "STABLE KPI TREND",
+          aiAnalysis: "Exhibits top 3% behavioral consistency. Coaching on rapid CRM wrap-up shaved 14 seconds off average handle time with positive customer sentiment."
+        },
+
+        'agent-mariam': {
+          name: "Mariam Youssef",
+          title: "Technical Support Representative",
+          assigned: "Sarah Mansour (TL Falcon)",
+          photo: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&auto=format&fit=crop&q=80",
+          note: "Late auxiliary logged; excessive hold times on billing refund inquiries.",
+          perf: "84.5%",
+          qa: "82.0%",
+          chartDelta: "-4.5% vs Last Week",
+          trendCurrent: [90, 88, 86, 85, 84.8, 84.5, 84.5],
+          trendPast: [89, 89, 89.2, 89.5, 89.0, 89.0, 89.0],
+          history: [
+            { date: "Yesterday", text: "TL Sarah reviewed billing flowchart hold rules." },
+            { date: "12 Sep 2026", text: "Reminded regarding permitted auxiliary break durations." }
+          ],
+          kpis: [
+            { label: "Agent AHT", val: "428s", delta: "+45s DoD (Spike)", good: false },
+            { label: "Customer CSAT", val: "86.4%", delta: "-2.4% WoW", good: false },
+            { label: "QA %", val: "82.0%", delta: "-3.5% DoD", good: false },
+            { label: "Aux Adherence", val: "84.2%", delta: "-6.1% DoD", good: false }
+          ],
+          aiTag: "REVIEW CONTEXT",
+          aiAnalysis: "Agent experiences repeated friction on billing refund verification, defaulting to extended hold times (avg 145s). Co-pilot simulation recommended immediately."
+        },
+
+        'agent-ziad': {
+          name: "Ziad Mostafa",
+          title: "Voice Representative",
+          assigned: "Ahmed Hassan (TL Alpha)",
+          photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&auto=format&fit=crop&q=80",
+          note: "Nominated for SME shadow co-pilot role.",
+          perf: "95.0%",
+          qa: "94.8%",
+          chartDelta: "+1.9% vs Last Week",
+          trendCurrent: [91, 92, 92.5, 93, 94, 94.8, 95.0],
+          trendPast: [90, 90.5, 91, 91.8, 92, 93, 93.1],
+          history: [
+            { date: "15 Sep 2026", text: "Recognized for high empathy on escalated billing dispute." }
+          ],
+          kpis: [
+            { label: "Agent AHT", val: "312s", delta: "-8s DoD", good: true },
+            { label: "Customer CSAT", val: "94.5%", delta: "+1.0% WoW", good: true },
+            { label: "FCR Rate", val: "83.0%", delta: "+1.4% DoD", good: true },
+            { label: "Aux Adherence", val: "96.0%", delta: "+0.2% WoW", good: true }
+          ],
+          aiTag: "STEADY KPI TREND",
+          aiAnalysis: "Consistent execution across technical and billing queues. Low variance standard deviation floor-wide."
+        },
+
+        'agent-tarek': {
+          name: "Tarek Fathy",
+          title: "Voice Representative",
+          assigned: "Sarah Mansour (TL Falcon)",
+          photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80",
+          note: "Working on call wrapping speed.",
+          perf: "85.2%",
+          qa: "84.0%",
+          chartDelta: "-1.2% vs Last Week",
+          trendCurrent: [88, 87, 86, 85.5, 85.2, 85.2, 85.2],
+          trendPast: [86, 86.5, 87, 87, 86.8, 86.4, 86.4],
+          history: [
+            { date: "Two days ago", text: "Coached on CRM wrap-up shortcuts." }
+          ],
+          kpis: [
+            { label: "Agent AHT", val: "395s", delta: "+22s DoD", good: false },
+            { label: "Customer CSAT", val: "88.0%", delta: "-0.5% WoW", good: false },
+            { label: "QA %", val: "84.0%", delta: "-1.2% DoD", good: false },
+            { label: "Aux Adherence", val: "88.0%", delta: "-1.0% DoD", good: false }
+          ],
+          aiTag: "WRAP-UP BOTTLENECK",
+          aiAnalysis: "After-call work (ACW) averages 82 seconds, exceeding target by 32s. Requires CRM template macro reinforcement."
+        },
+
+        'agent-nouran': {
+          name: "Nouran Ezzat",
+          title: "Billing Representative",
+          assigned: "Sarah Mansour (TL Falcon)",
+          photo: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&auto=format&fit=crop&q=80",
+          note: "Handling high-volume billing inquiries.",
+          perf: "88.4%",
+          qa: "89.0%",
+          chartDelta: "+0.8% vs Last Week",
+          trendCurrent: [86, 86.5, 87, 87.5, 88, 88.2, 88.4],
+          trendPast: [85, 85.5, 86, 86.5, 87, 87.4, 87.6],
+          history: [
+            { date: "16 Sep 2026", text: "Completed refreshed billing compliance module." }
+          ],
+          kpis: [
+            { label: "Agent AHT", val: "380s", delta: "-4s DoD", good: true },
+            { label: "Customer CSAT", val: "89.0%", delta: "+0.5% WoW", good: true },
+            { label: "QA %", val: "89.0%", delta: "+1.0% DoD", good: true },
+            { label: "Aux Adherence", val: "91.5%", delta: "+0.5% DoD", good: true }
+          ],
+          aiTag: "POSITIVE MOMENTUM",
+          aiAnalysis: "Post-training metrics show steady improvement across call taxonomy tagging."
+        },
+
+        'agent-heba': {
+          name: "Heba Tarek",
+          title: "Senior Chat Specialist",
+          assigned: "Omar Khaled (TL Chat)",
+          photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80",
+          note: "CRM ticket taxonomy tagging champion.",
+          perf: "94.5%",
+          qa: "95.0%",
+          chartDelta: "+2.5% vs Last Week",
+          trendCurrent: [90, 91, 92, 93, 93.8, 94.2, 94.5],
+          trendPast: [88, 89, 89.5, 90, 91, 91.8, 92.0],
+          history: [
+            { date: "15 Sep 2026", text: "Reviewed customer escalation tagging rules." }
+          ],
+          kpis: [
+            { label: "Chat AHT", val: "310s", delta: "-8s DoD", good: true },
+            { label: "Concurrency", val: "2.6x", delta: "+0.1x DoD", good: true },
+            { label: "QA %", val: "95.0%", delta: "+1.0% DoD", good: true },
+            { label: "Aux Adherence", val: "95.2%", delta: "+0.4% WoW", good: true }
+          ],
+          aiTag: "CHAT CONTEXT",
+          aiAnalysis: "High response speed and balanced dual-chat concurrency. Zero recorded compliance variances."
+        },
+
+        'agent-salma': {
+          name: "Salma Helmy",
+          title: "Live Chat Agent",
+          assigned: "Omar Khaled (TL Chat)",
+          photo: "https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?w=100&auto=format&fit=crop&q=80",
+          note: "Top customer empathy rating in digital chat.",
+          perf: "97.1%",
+          qa: "96.5%",
+          chartDelta: "+3.0% vs Last Week",
+          trendCurrent: [92, 93, 94, 95, 96, 96.8, 97.1],
+          trendPast: [90, 91, 91.5, 92, 93, 93.8, 94.1],
+          history: [
+            { date: "Yesterday", text: "Achieved 100% CSAT on 34 consecutive customer chats." }
+          ],
+          kpis: [
+            { label: "Chat AHT", val: "298s", delta: "-12s DoD", good: true },
+            { label: "Customer CSAT", val: "96.2%", delta: "+1.8% WoW", good: true },
+            { label: "QA %", val: "96.5%", delta: "+0.5% DoD", good: true },
+            { label: "Aux Adherence", val: "96.8%", delta: "+0.3% WoW", good: true }
+          ],
+          aiTag: "STRONG KPI SIGNAL",
+          aiAnalysis: "Customer sentiment and speed are in top 1% floor-wide. Ideal candidate for peer-to-peer coaching."
+        },
+
+        'agent-dina': {
+          name: "Dina Samir",
+          title: "Quality Assurance Auditor",
+          assigned: "Mona Aly (QA Lead)",
+          photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
+          note: "Auditing voice and digital transcripts.",
+          perf: "98.2%",
+          qa: "99.0%",
+          chartDelta: "+0.9% vs Last Week",
+          trendCurrent: [96, 96.5, 97, 97.5, 98, 98.1, 98.2],
+          trendPast: [95, 95.8, 96, 96.5, 97, 97.2, 97.3],
+          history: [
+            { date: "Two days ago", text: "Completed calibration sample quota ahead of target." }
+          ],
+          kpis: [
+            { label: "Audits Completed", val: "48 / wk", delta: "+4 DoD", good: true },
+            { label: "Calibration Acc.", val: "98.2%", delta: "+0.5% WoW", good: true },
+            { label: "Dispute Rate", val: "0.2%", delta: "-0.1% WoW", good: true },
+            { label: "TAT", val: "18h", delta: "-2h DoD", good: true }
+          ],
+          aiTag: "AUDIT CONTEXT",
+          aiAnalysis: "Audit consistency with client rubrics is 98.2%. Feedback logged within 24 hours of interaction."
+        },
+
+        'agent-amr': {
+          name: "Amr Nabil",
+          title: "Tier-2 Disputes Specialist",
+          assigned: "Karim Fouad (TL Escalations)",
+          photo: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80",
+          note: "Resolving chargeback and refund claims.",
+          perf: "93.5%",
+          qa: "92.0%",
+          chartDelta: "+2.1% vs Last Week",
+          trendCurrent: [89, 90, 91, 91.8, 92.5, 93, 93.5],
+          trendPast: [88, 88.5, 89, 90, 90.5, 91, 91.4],
+          history: [
+            { date: "Yesterday", text: "Recovered $4,200 in disputed client charges." }
+          ],
+          kpis: [
+            { label: "Resolution Time", val: "38m", delta: "-6m DoD", good: true },
+            { label: "Dispute FCR", val: "92.0%", delta: "+1.2% WoW", good: true },
+            { label: "QA %", val: "92.0%", delta: "+0.8% DoD", good: true },
+            { label: "Aux Adherence", val: "94.0%", delta: "+0.5% WoW", good: true }
+          ],
+          aiTag: "DISPUTE CONTEXT",
+          aiAnalysis: "Specialist exhibits strong negotiation and policy comprehension during complex customer dispute reviews."
+        },
+
+        'agent-hassan': {
+          name: "Hassan Badr",
+          title: "Omnichannel Email Specialist",
+          assigned: "Karim Fouad (TL Escalations)",
+          photo: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=100&auto=format&fit=crop&q=80",
+          note: "Managing complex email correspondence and SLAs.",
+          perf: "92.0%",
+          qa: "91.5%",
+          chartDelta: "+1.4% vs Last Week",
+          trendCurrent: [88, 89, 90, 90.5, 91, 91.8, 92.0],
+          trendPast: [87, 87.5, 88, 89, 89.8, 90.2, 90.6],
+          history: [
+            { date: "16 Sep 2026", text: "Zero email tickets breached 4-hour SLA response window." }
+          ],
+          kpis: [
+            { label: "First Response", val: "14m", delta: "-3m DoD", good: true },
+            { label: "Resolution SLA", val: "94.5%", delta: "+0.8% WoW", good: true },
+            { label: "QA %", val: "91.5%", delta: "+0.5% DoD", good: true },
+            { label: "Aux Adherence", val: "93.0%", delta: "+0.2% WoW", good: true }
+          ],
+          aiTag: "EMAIL QUEUE CONTEXT",
+          aiAnalysis: "Maintains high SLA compliance across all email tickets with structured written customer communications."
+        }
+      },
+
+      tickets: [
+        { id: "#TCK-9481", agent: "Karim Adel", photo: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&auto=format&fit=crop&q=80", leader: "Ahmed Hassan", channel: "Live Chat", duration: "310s", qa: "96%", alert: false, behavior: "Optimal Pacing" },
+        { id: "#TCK-9480", agent: "Mariam Youssef", photo: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&auto=format&fit=crop&q=80", leader: "Sarah Mansour", channel: "Voice", duration: "515s", qa: "82%", alert: true, behavior: "Prolonged Hold" },
+        { id: "#TCK-9479", agent: "Ziad Mostafa", photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&auto=format&fit=crop&q=80", leader: "Ahmed Hassan", channel: "Voice", duration: "295s", qa: "98%", alert: false, behavior: "First Contact Res." },
+        { id: "#TCK-9478", agent: "Heba Tarek", photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80", leader: "Omar Khaled", channel: "Live Chat", duration: "330s", qa: "94%", alert: false, behavior: "Active Concurrency" },
+        { id: "#TCK-9477", agent: "Amr Nabil", photo: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80", leader: "Karim Fouad", channel: "Video / Meet", duration: "480s", qa: "88%", alert: true, behavior: "Dispute Review" },
+        { id: "#TCK-9476", agent: "Dina Samir", photo: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80", leader: "Sarah Mansour", channel: "Voice", duration: "360s", qa: "91%", alert: false, behavior: "Steady Pacing" },
+        { id: "#TCK-9475", agent: "Salma Helmy", photo: "https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?w=100&auto=format&fit=crop&q=80", leader: "Omar Khaled", channel: "Live Chat", duration: "305s", qa: "97%", alert: false, behavior: "Smooth Empathy" },
+        { id: "#TCK-9474", agent: "Tarek Fathy", photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80", leader: "Sarah Mansour", channel: "Voice", duration: "490s", qa: "84%", alert: true, behavior: "Hold Exceeded" },
+        { id: "#TCK-9473", agent: "Nouran Ezzat", photo: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&auto=format&fit=crop&q=80", leader: "Sarah Mansour", channel: "Voice", duration: "380s", qa: "89%", alert: false, behavior: "Standard Flow" },
+        { id: "#TCK-9472", agent: "Hassan Badr", photo: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=100&auto=format&fit=crop&q=80", leader: "Karim Fouad", channel: "Email", duration: "410s", qa: "91%", alert: false, behavior: "Structured Reply" },
+        { id: "#TCK-9471", agent: "Karim Adel", photo: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&auto=format&fit=crop&q=80", leader: "Ahmed Hassan", channel: "Voice", duration: "318s", qa: "95%", alert: false, behavior: "FCR Verified" },
+        { id: "#TCK-9470", agent: "Ziad Mostafa", photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&auto=format&fit=crop&q=80", leader: "Ahmed Hassan", channel: "Voice", duration: "325s", qa: "94%", alert: false, behavior: "Optimal Flow" },
+        { id: "#TCK-9469", agent: "Mariam Youssef", photo: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&auto=format&fit=crop&q=80", leader: "Sarah Mansour", channel: "Voice", duration: "530s", qa: "81%", alert: true, behavior: "Technical Stall" }
+      ]
+    };
+
+
+    function closeNumi38(){document.querySelectorAll('.numi-dot').forEach(x=>{x.classList.remove('face');x.dataset.stage='0'});document.querySelectorAll('.numi-box').forEach(x=>x.classList.remove('show'))}
+    function numi38(e,b){e.stopPropagation();const k=b.dataset.numi,box=document.querySelector('.numi-box[data-box="'+k+'"]'),txt=box.querySelector('.numi-txt'),qs=box.querySelector('.numi-qs'),st=+(b.dataset.stage||0);document.querySelectorAll('.numi-dot').forEach(x=>{if(x!==b){x.classList.remove('face');x.dataset.stage='0'}});document.querySelectorAll('.numi-box').forEach(x=>{if(x!==box)x.classList.remove('show')});if(st===0){b.classList.add('face');b.dataset.stage='1';box.classList.add('show');txt.textContent=k==='ticket'?'This ticket report combines timing, resolution and quality evidence.':k==='person'?'This profile combines role KPIs, target distance and historical movement.':'This KPI report compares current values with historical and target series.';qs.classList.remove('show')}else if(st===1){b.dataset.stage='2';txt.textContent='Ask NUMI about this report.';qs.innerHTML=['What changed?','What should I inspect next?','Summarize for handover'].map(q=>'<button class="numi-q" onclick="numiAns38(event,\''+k+'\',\''+q+'\')">'+q+'</button>').join('');qs.classList.add('show')}else{b.classList.remove('face');b.dataset.stage='0';box.classList.remove('show')}}
+    function numiAns38(e,k,q){e.stopPropagation();document.querySelector('.numi-box[data-box="'+k+'"] .numi-txt').textContent=q==='What changed?'?'Compare the current series with the selected prior period and target distance.':q.includes('next')?'Inspect volume, ASA, AHT, hold, ACW, occupancy, abandonment, adherence and QA together.':'Handover: record the delta, affected queue, supporting evidence and next validation step.'}
+    document.addEventListener('click',e=>{if(!e.target.closest('.numi-dot')&&!e.target.closest('.numi-box'))closeNumi38()});
+    function bars38(vals,labs){const W=520,H=175,m=Math.max(...vals);return '<svg class="motion-chart-v38" viewBox="0 0 '+W+' '+H+'">'+vals.map((v,i)=>{const h=v/m*110;return '<rect x="'+(45+i*112)+'" y="'+(135-h)+'" width="62" height="'+h+'" rx="9" fill="#58bfea"/><text x="'+(76+i*112)+'" y="158" text-anchor="middle" font-size="9" fill="#64748b">'+labs[i]+'</text></svg>'}).join('')+'</svg>'}
+    function openTicket38(id){const t=STATE.tickets.find(x=>x.id===id);if(!t)return;closeNumi38();const dur=parseInt(t.duration),qa=parseInt(t.qa),talk=Math.round(dur*.66),hold=Math.round(dur*(t.alert?.21:.13)),acw=dur-talk-hold,wait=t.alert?39:22;document.getElementById('t38-title').textContent=t.id+' • '+t.channel;document.getElementById('t38-sub').textContent=t.agent+' • '+t.leader+' • '+t.behavior;document.getElementById('t38-stats').innerHTML=[['Handle',dur+'s'],['Talk',talk+'s'],['Hold',hold+'s'],['ACW',acw+'s'],['Queue wait',wait+'s'],['QA',qa+'%'],['Transfer',t.alert?'Review':'No'],['Resolution',t.alert?'Validate':'First contact']].map(x=>'<div class="ticket-stat38"><div class="text-[9px] text-slate-500">'+x[0]+'</div><b class="font-mono text-sm">'+x[1]+'</b></div>').join('');document.getElementById('t38-chart').innerHTML=bars38([talk,hold,acw,wait],['Talk','Hold','ACW','Wait']);document.getElementById('t38-quality').innerHTML=[['Process accuracy',Math.min(99,qa+2)],['Documentation',qa-1],['Compliance',Math.min(100,qa+4)],['Resolution completeness',qa-3]].map(x=>'<div><div class="flex justify-between text-[10px]"><span>'+x[0]+'</span><b>'+x[1]+'%</b></div><div class="quality38"><i style="width:'+x[1]+'%"></i></div></div>').join('');document.getElementById('t38-note').textContent='Handle time contains '+talk+'s talk, '+hold+'s hold and '+acw+'s ACW. Review quality and resolution together.';A39.ticket.current=[qa-5,qa-4,qa-3,qa-2,qa-1,qa,qa];render39('ticket');document.getElementById('ticket-quality38').classList.remove('hidden')}
+    function closeTicket38(){document.getElementById('ticket-quality38').classList.add('hidden');closeNumi38()}
+
+
+    let SOUND39=true,A39={metric:{period:'day',current:[84,85,86,87,86,88,88.4]},profile:{period:'day',current:[88,89,90,91,92,93,94]},ticket:{period:'day',current:[88,89,90,91,92,91,93]}};
+    const PERIOD39={day:[83,84,84,85,85,86,86],week:[81,82,83,83,84,85,85],month:[78,79,80,82,82,83,84],six:[72,75,77,79,81,82,83],overall:[68,72,75,78,80,82,84]};
+    function beep39(freq=520,d=.035,vol=.018){if(!SOUND39)return;try{const C=window.AudioContext||window.webkitAudioContext,c=new C(),o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.value=freq;g.gain.setValueAtTime(vol,c.currentTime);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+d);o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+d)}catch(e){}}
+    function toggleSound39(){SOUND39=!SOUND39;document.getElementById('sound-toggle39').classList.toggle('off',!SOUND39);beep39(700,.05,.02)}
+    document.addEventListener('click',e=>{if(e.target.closest('button,.apple-card-hover,.clickable-kpi39'))beep39(e.target.closest('.numi-dot')?660:520)},true);
+    function line39(a,b){const W=560,H=180,p=20,all=a.concat(b),mn=Math.min(...all)-3,mx=Math.max(...all)+3,fy=v=>H-p-(v-mn)*(H-2*p)/(mx-mn),path=x=>x.map((v,i)=>(i?'L':'M')+(p+i*(W-2*p)/(x.length-1)).toFixed(1)+' '+fy(v).toFixed(1)).join(' ');return '<svg class="motion39" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none"><path d="'+path(a)+'" fill="none" stroke="#38bdf8" stroke-width="3"/><path d="'+path(b)+'" fill="none" stroke="#34d399" stroke-width="2" stroke-dasharray="6 4"/></svg>'}
+    function bars39(v){const W=560,H=180,m=Math.max(...v.map(Math.abs),1);return '<svg class="motion39" viewBox="0 0 '+W+' '+H+'">'+v.map((x,i)=>{const h=Math.max(4,Math.abs(x)/m*115);return '<rect x="'+(28+i*74)+'" y="'+(145-h)+'" width="44" height="'+h+'" rx="8" fill="'+(x>=0?'#34d399':'#fb7185')+'"/>'}).join('')+'</svg>'}
+    function setPeriod39(scope,p,b){A39[scope].period=p;document.querySelectorAll('[data-periods39="'+scope+'"] .period39').forEach(x=>x.classList.remove('active'));b.classList.add('active');render39(scope);beep39(610)}
+    function render39(scope){const cur=A39[scope].current,prev=PERIOD39[A39[scope].period],line=document.querySelector('[data-chart39="'+scope+'-line"]'),bars=document.querySelector('[data-chart39="'+scope+'-bars"]');if(line)line.innerHTML=line39(cur,prev);if(bars)bars.innerHTML=bars39(cur.map((x,i)=>x-prev[i]));const rel=document.querySelector('[data-related39="'+scope+'"]');if(rel)rel.innerHTML=[['Volume','2,418'],['ASA','24s'],['Occupancy','82.6%'],['QA','92.6%']].map(x=>'<div class="p-2 rounded-xl bg-white/70 dark:bg-white/5"><div class="text-[9px] text-slate-500">'+x[0]+'</div><b class="font-mono text-xs">'+x[1]+'</b></div>').join('');observeUnroll39(scope)}
+    function observeUnroll39(scope){const root=document.getElementById('analytics39-'+scope);if(!root)return;const ob=new IntersectionObserver(es=>es.forEach(x=>{x.target.classList.toggle('unrolled',x.isIntersecting);if(x.isIntersecting)beep39(360,.025,.008)}),{root,threshold:.45});root.querySelectorAll('.unroll-section').forEach(x=>ob.observe(x))}
+
+
+    function renderV41Structure(){const el=document.getElementById('v41-structure');if(!el)return;const teams=[{tl:['tl-ahmed','Ahmed Hassan','TL Alpha',['SLA 91%','AHT 338s'],true,true],sme:['agent-karim','Karim Adel','SME Alpha',['FCR 84%','QA 95%'],true,true],agents:[['agent-ziad','Ziad Mostafa','AHT 312s',true,true],['agent-nouran','Nouran Ezzat','QA 89%',true,true],['agent-hassan','Hassan Badr','SLA 94%',false,true]]},{tl:['tl-sarah','Sarah Mansour','TL Falcon',['SLA 82%','AHT 410s'],true,false],sme:['agent-tarek','Tarek Fathy','SME Falcon',['AHT 395s','QA 84%'],false,false],agents:[['agent-mariam','Mariam Youssef','QA 82%',true,false],['agent-tarek','Tarek Fathy','AHT 395s',false,false],['agent-nouran','Nouran Ezzat','QA 89%',true,true]]},{tl:['tl-omar','Omar Khaled','TL Rapid Chat',['SLA 95%','CSAT 94%'],true,true],sme:['agent-heba','Heba Tarek','SME Chat',['FRT 22s','QA 95%'],true,true],agents:[['agent-salma','Salma Helmy','QA 97%',true,true],['agent-dina','Dina Samir','Audits 48',false,true],['agent-amr','Amr Nabil','FCR 92%',true,true]]}];const node=(x)=>'<div class="v41-node '+(x[4]?'online ':'')+(x[5]?'good':'watch')+'" onclick="openPersonModal(\''+x[0]+'\')">'+(x[4]?'<span class="v41-presence"></span>':'')+'<div class="v41-role">'+x[2]+'</div><div class="v41-name">'+x[1]+'</div><div class="v41-kpis">'+(Array.isArray(x[3])?x[3]:[x[3]]).map(k=>'<span>'+k+'</span>').join('')+'</div></div>';el.innerHTML=teams.map(t=>'<div class="apple-card v41-team"><div class="text-[9px] font-mono text-slate-500 mb-1">DELIVERY TEAM</div>'+node(t.tl)+'<div class="text-center text-slate-300 dark:text-slate-700">│</div>'+node(t.sme)+'<div class="text-center text-slate-300 dark:text-slate-700">│</div><div class="v41-agents">'+t.agents.map(a=>node([a[0],a[1],'Agent',a[2],a[3],a[4]])).join('')+'</div></div>').join('')}
+    function printV41(id){const target=document.getElementById(id);if(!target)return;document.body.classList.add('v41-printing');target.classList.add('v41-print-target');window.print();setTimeout(()=>{target.classList.remove('v41-print-target');document.body.classList.remove('v41-printing')},350)}
+    function printScreenV41(id){const target=document.getElementById(id);if(!target)return;document.body.classList.add('v41-print-screen');target.classList.add('v41-screen-target');window.print();setTimeout(()=>{target.classList.remove('v41-screen-target');document.body.classList.remove('v41-print-screen')},350)}
+
+
+    const PRESENCE47={'om-bahaa':'online','sup-tamer':'online','sup-nour':'busy','sup-layla':'offline','tl-ahmed':'online','tl-sarah':'busy','tl-omar':'online','tl-mona':'online','tl-fouad':'offline','agent-karim':'online','agent-ziad':'online','agent-hassan':'offline','agent-mariam':'busy','agent-tarek':'busy','agent-nouran':'online','agent-heba':'online','agent-salma':'online','agent-dina':'offline','agent-amr':'online'};
+    function highlightSelectedProfile47(key){
+      document.querySelectorAll('#tree-container img').forEach(function(img){img.classList.remove('profile-selected-online','profile-selected-busy','profile-selected-offline')});
+      const card=document.querySelector('#tree-container [onclick="openPersonModal(\''+key+'\')"]'),state=PRESENCE47[key]||'offline';if(card){const img=card.querySelector('img');if(img)img.classList.add('profile-selected-'+state)}
+      const photo=document.getElementById('dossier-photo');if(photo){photo.classList.remove('profile-selected-online','profile-selected-busy','profile-selected-offline');photo.classList.add('profile-selected-'+state)}
+    }
+    function syncNav47(screenId){const map={'screen-tickets':'nav-btn-tickets','screen-overview':'nav-btn-overview','screen-tree':'nav-btn-tree'};Object.values(map).forEach(function(id){const b=document.getElementById(id);if(b)b.disabled=false});const active=document.getElementById(map[screenId]);if(active)active.disabled=true}
+
+    // Chart instances
+    let pieChartInstance = null;
+    let barChartInstance = null;
+    let lineChartInstance = null;
+    let drillDownChartInstance = null;
+    let dossierChartInstance = null;
+
+    function initOverviewCharts() {
+      const isD = STATE.isDark;
+      const textColor = isD ? '#94a3b8' : '#64748b';
+      const gridColor = isD ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.04)';
+
+      // 1. Semi-Doughnut Quality Gauge Chart
+      const pieCanvas = document.getElementById('overviewPieChart');
+      if (pieCanvas) {
+        const pieCtx = pieCanvas.getContext('2d');
+        if (pieChartInstance) pieChartInstance.destroy();
+        pieChartInstance = new Chart(pieCtx, {
+          type: 'doughnut',
+          data: {
+            labels: ['Passing (90-100%)', 'Review (80-89%)', 'Coaching (<80%)'],
+            datasets: [{
+              data: [76, 18, 6],
+              backgroundColor: ['#059669', '#d97706', '#e11d48'],
+              borderWidth: 0,
+              hoverOffset: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            rotation: -90,
+            circumference: 180,
+            cutout: '76%',
+            plugins: { legend: { display: false }, tooltip: { enabled: true } }
+          }
+        });
+      }
+
+      // 2. Dual-Bar Inbound Volume vs Interval
+      const barCanvas = document.getElementById('overviewBarChart');
+      if (barCanvas) {
+        const barCtx = barCanvas.getContext('2d');
+        if (barChartInstance) barChartInstance.destroy();
+
+        const currentVol = [180, 290, 380, 420, 395, 340, 410, 360, 240];
+        let compVol = [170, 260, 350, 390, 380, 330, 390, 345, 230];
+        if (STATE.comparisonMode === 'wow') compVol = [160, 250, 340, 380, 370, 310, 375, 330, 210];
+        if (STATE.comparisonMode === 'baseline') compVol = [180, 280, 360, 400, 380, 340, 390, 350, 230];
+
+        barChartInstance = new Chart(barCtx, {
+          type: 'bar',
+          data: {
+            labels: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00'],
+            datasets: [
+              {
+                label: 'Current Today',
+                data: currentVol,
+                backgroundColor: isD ? '#38bdf8' : '#0284c7',
+                borderRadius: 4
+              },
+              {
+                label: STATE.comparisonMode === 'dod' ? 'Yesterday (DoD)' : STATE.comparisonMode === 'wow' ? 'Last Week (WoW)' : 'SLA Baseline',
+                data: compVol,
+                backgroundColor: isD ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.12)',
+                borderRadius: 4
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { grid: { display: false }, ticks: { color: textColor, font: { family: 'JetBrains Mono', size: 9 } } },
+              y: { grid: { color: gridColor }, ticks: { color: textColor, font: { family: 'JetBrains Mono', size: 9 } } }
+            }
+          }
+        });
+      }
+
+      // 3. Smooth Area Line Curve (AHT Progression vs Interval)
+      const lineCanvas = document.getElementById('overviewLineChart');
+      if (lineCanvas) {
+        const lineCtx = lineCanvas.getContext('2d');
+        if (lineChartInstance) lineChartInstance.destroy();
+
+        const currentAht = [330, 345, 360, 395, 415, 370, 390, 375, 372];
+        let compAht = [335, 340, 345, 350, 352, 348, 349, 347, 348];
+
+        lineChartInstance = new Chart(lineCtx, {
+          type: 'line',
+          data: {
+            labels: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00'],
+            datasets: [
+              {
+                label: 'Current AHT (Seconds)',
+                data: currentAht,
+                borderColor: '#e11d48',
+                backgroundColor: isD ? 'rgba(225, 29, 72, 0.14)' : 'rgba(225, 29, 72, 0.08)',
+                borderWidth: 2,
+                tension: 0.35,
+                fill: true,
+                pointRadius: 2.5
+              },
+              {
+                label: 'Comparison Target Ceiling',
+                data: compAht,
+                borderColor: isD ? '#64748b' : '#94a3b8',
+                borderDash: [4, 4],
+                borderWidth: 1.5,
+                tension: 0.35,
+                fill: false,
+                pointRadius: 0
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: { grid: { display: false }, ticks: { color: textColor, font: { family: 'JetBrains Mono', size: 9 } } },
+              y: { grid: { color: gridColor }, ticks: { color: textColor, font: { family: 'JetBrains Mono', size: 9 } } }
+            }
+          }
+        });
+      }
+
+      renderHealthMatrixTable();
+    }
+
+    function setComparisonMode(mode) {
+      STATE.comparisonMode = mode;
+      
+      const btnDod = document.getElementById('btn-comp-dod');
+      const btnWow = document.getElementById('btn-comp-wow');
+      const btnBase = document.getElementById('btn-comp-base');
+
+      const buttons = [btnDod, btnWow, btnBase];
+      for (let i = 0; i < buttons.length; i++) {
+        const btn = buttons[i];
+        if (btn) {
+          btn.classList.remove('bg-white', 'dark:bg-slate-800', 'text-slate-900', 'dark:text-white', 'shadow-xs', 'font-bold');
+          btn.classList.add('text-slate-500', 'dark:text-slate-400');
+        }
+      }
+
+      const activeBtn = mode === 'dod' ? btnDod : (mode === 'wow' ? btnWow : btnBase);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-slate-500', 'dark:text-slate-400');
+        activeBtn.classList.add('bg-white', 'dark:bg-slate-800', 'text-slate-900', 'dark:text-white', 'shadow-xs', 'font-bold');
+      }
+
+      const tag = document.getElementById('active-comp-tag');
+      if (tag) {
+        tag.textContent = mode === 'dod' ? 'Active Interval: Day-over-Day (DoD)' : (mode === 'wow' ? 'Active Interval: Week-over-Week (WoW)' : 'Active Interval: vs. SLA Baseline Target');
+      }
+
+      // Update Sublabels
+      const barSummary = document.getElementById('bar-delta-summary');
+      if (barSummary) {
+        barSummary.textContent = mode === 'dod' ? '+142 tck vs Prev Day' : (mode === 'wow' ? '+210 tck vs Prev Week' : '+18 tck vs Target');
+      }
+
+      // Update KPI deltas based on selected mode
+      if (mode === 'dod') {
+        document.getElementById('kpi-sla-delta').textContent = "+2.1% DoD";
+        document.getElementById('kpi-csat-delta').textContent = "+1.6% DoD";
+        document.getElementById('kpi-aht-delta').textContent = "+24s DoD (Spike)";
+        document.getElementById('kpi-fcr-delta').textContent = "+1.2% DoD";
+        document.getElementById('kpi-occ-delta').textContent = "+0.4% DoD";
+        document.getElementById('kpi-shrink-delta').textContent = "-0.9% DoD";
+        document.getElementById('kpi-adh-delta').textContent = "+0.8% DoD";
+        document.getElementById('kpi-qa-delta').textContent = "+1.4% DoD";
+      } else if (mode === 'wow') {
+        document.getElementById('kpi-sla-delta').textContent = "+3.4% WoW";
+        document.getElementById('kpi-csat-delta').textContent = "+2.2% WoW";
+        document.getElementById('kpi-aht-delta').textContent = "+18s WoW";
+        document.getElementById('kpi-fcr-delta').textContent = "+2.8% WoW";
+        document.getElementById('kpi-occ-delta').textContent = "+1.1% WoW";
+        document.getElementById('kpi-shrink-delta').textContent = "-1.8% WoW";
+        document.getElementById('kpi-adh-delta').textContent = "+1.2% WoW";
+        document.getElementById('kpi-qa-delta').textContent = "+2.5% WoW";
+      } else {
+        document.getElementById('kpi-sla-delta').textContent = "+3.4% vs 85%";
+        document.getElementById('kpi-csat-delta').textContent = "+3.2% vs 88%";
+        document.getElementById('kpi-aht-delta').textContent = "+27s vs 345s";
+        document.getElementById('kpi-fcr-delta').textContent = "+4.5% vs 74%";
+        document.getElementById('kpi-occ-delta').textContent = "+0.6% vs 82%";
+        document.getElementById('kpi-shrink-delta').textContent = "-1.2% vs 16%";
+        document.getElementById('kpi-adh-delta').textContent = "+1.2% vs 92%";
+        document.getElementById('kpi-qa-delta').textContent = "+2.6% vs 90%";
+      }
+
+      initOverviewCharts();
+      setTimeout(function(){[overviewPieChart,overviewBarChart,overviewLineChart].forEach(function(c){if(c){c.options.animation={duration:1200,easing:'easeOutQuart'};c.update();}})},100);
+      showToast('Recalibrated charts to ' + mode.toUpperCase() + ' interval', 'info');
+    }
+
+    function renderHealthMatrixTable() {
+      const tbody = document.getElementById('matrix-table-body');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      const mode = STATE.comparisonMode;
+      const compLabel = mode === 'dod' ? 'Yesterday (DoD)' : (mode === 'wow' ? 'Last Week (WoW)' : 'Contract Baseline');
+
+      const metrics = [
+        { name: "Service Level (85/20)", target: "85.0%", current: "88.4%", comp: mode === 'dod' ? "86.3%" : "85.0%", delta: "+2.1%", status: "HEALTHY", action: "Maintain shift routing rules" },
+        { name: "Customer CSAT", target: "88.0%", current: "91.2%", comp: mode === 'dod' ? "89.6%" : "89.0%", delta: "+1.6%", status: "HEALTHY", action: "Commend digital chat pod" },
+        { name: "Average Handle Time (AHT)", target: "345s", current: "372s", comp: mode === 'dod' ? "348s" : "354s", delta: "+24s", status: "ANOMALY", action: "Co-pilot Falcon Pod billing holds" },
+        { name: "First Contact Resolution (FCR)", target: "74.0%", current: "78.5%", comp: mode === 'dod' ? "77.3%" : "75.7%", delta: "+1.2%", status: "HEALTHY", action: "Sustain FAQ quick macro flow" },
+        { name: "Floor Occupancy Rate", target: "78% - 85%", current: "82.6%", comp: mode === 'dod' ? "82.2%" : "81.5%", delta: "+0.4%", status: "HEALTHY", action: "Protect break aux intervals" },
+        { name: "Account Shrinkage", target: "< 16.0%", current: "14.8%", comp: mode === 'dod' ? "15.7%" : "16.6%", delta: "-0.9%", status: "OPTIMAL", action: "WFM adherence verified" },
+        { name: "Schedule Adherence", target: "92.0%", current: "93.2%", comp: mode === 'dod' ? "92.4%" : "92.0%", delta: "+0.8%", status: "HEALTHY", action: "Audit 3 flagged auxiliary rep logs" },
+        { name: "Net QA Quality Score", target: "90.0%", current: "92.6%", comp: mode === 'dod' ? "91.2%" : (mode === 'wow' ? "90.1%" : "90.0%"), delta: "+1.4%", status: "HEALTHY", action: "Calibration variance within 1.2%" },
+        { name: "Average Speed of Answer (ASA)", target: "< 30s", current: "24s", comp: mode === 'dod' ? "27s" : "29s", delta: "-3s", status: "HEALTHY", action: "Maintain interval staffing" },
+        { name: "Abandonment Rate", target: "< 5.0%", current: "4.7%", comp: mode === 'dod' ? "5.3%" : "5.1%", delta: "-0.6%", status: "HEALTHY", action: "Monitor peak-hour queue depth" },
+        { name: "Answer Rate", target: "90.0%", current: "92.3%", comp: mode === 'dod' ? "91.2%" : "90.8%", delta: "+1.1%", status: "HEALTHY", action: "Maintain routing rules" },
+        { name: "Interval Compliance", target: "85.0%", current: "87.5%", comp: mode === 'dod' ? "85.0%" : "84.2%", delta: "+2.5%", status: "HEALTHY", action: "Review missed intervals" },
+        { name: "Utilization", target: "78% - 85%", current: "79.8%", comp: mode === 'dod' ? "78.9%" : "78.2%", delta: "+0.9%", status: "HEALTHY", action: "Balance productive and available time" },
+        { name: "AUX without Break", target: "< 9.0%", current: "7.9%", comp: mode === 'dod' ? "8.6%" : "8.9%", delta: "-0.7%", status: "HEALTHY", action: "Continue AUX exception review" }
+      ];
+
+      for (let i = 0; i < metrics.length; i++) {
+        const m = metrics[i];
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 dark:hover:bg-white/[0.03] transition";
+        const dotColor = m.status === 'ANOMALY' ? 'bg-rose-500' : 'bg-emerald-500';
+        const currentValColor = m.status === 'ANOMALY' ? 'text-rose-600 dark:text-rose-400' : 'text-slate-900 dark:text-white';
+        const deltaColor = m.status === 'ANOMALY' ? 'text-rose-600' : 'text-emerald-600';
+        const badgeClasses = m.status === 'ANOMALY' ? 'bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300' : 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300';
+
+        tr.innerHTML = '<td class="py-2.5 px-3 font-semibold text-slate-900 dark:text-white flex items-center gap-2">' +
+            '<span class="w-1.5 h-1.5 rounded-full ' + dotColor + '"></span>' +
+            '<span>' + m.name + '</span>' +
+          '</td>' +
+          '<td class="py-2.5 px-3 font-mono text-slate-500">' + m.target + '</td>' +
+          '<td class="py-2.5 px-3 font-mono font-bold ' + currentValColor + '">' + m.current + '</td>' +
+          '<td class="py-2.5 px-3 font-mono text-slate-500">' + m.comp + ' <span class="text-[9px] text-slate-400">(' + compLabel + ')</span></td>' +
+          '<td class="py-2.5 px-3 text-center font-mono font-bold ' + deltaColor + '">' + m.delta + '</td>' +
+          '<td class="py-2.5 px-3 text-center">' +
+            '<span class="px-2 py-0.5 rounded text-[9px] font-mono font-bold ' + badgeClasses + '">' +
+              m.status +
+            '</span>' +
+          '</td>' +
+          '<td class="py-2.5 px-3 text-right font-mono text-[11px] text-slate-600 dark:text-slate-400">' + m.action + '</td>';
+        tbody.appendChild(tr);
+      }
+    }
+
+    function renderTicketsTable() {
+      const tbody = document.getElementById('tickets-table-body');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      for (let i = 0; i < STATE.tickets.length; i++) {
+        const tck = STATE.tickets[i];
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-slate-50 dark:hover:bg-white/[0.04] transition cursor-pointer ' + (tck.alert ? 'bg-rose-50/50 dark:bg-rose-950/20' : '');
+        
+        const durationColor = parseInt(tck.duration, 10) > 400 ? 'text-rose-600 dark:text-rose-400' : 'text-slate-800 dark:text-slate-200';
+        const qaColor = parseInt(tck.qa, 10) < 85 ? 'text-amber-600' : 'text-emerald-600';
+        const behaviorBadge = tck.alert ? 'bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-500/30' : 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300';
+
+        row.innerHTML = '<td class="py-3 px-3 font-mono font-bold text-sky-600 dark:text-sky-400">' + tck.id + '</td>' +
+          '<td class="py-3 px-3">' +
+            '<div class="flex items-center space-x-2.5">' +
+              '<img src="' + tck.photo + '" alt="' + tck.agent + '" class="w-7 h-7 rounded-lg object-cover ring-1 ring-slate-200 dark:ring-white/10 shrink-0">' +
+              '<span class="font-bold text-slate-900 dark:text-white">' + tck.agent + '</span>' +
+            '</div>' +
+          '</td>' +
+          '<td class="py-3 px-3 text-slate-500 font-mono text-[11px]">' + tck.leader + '</td>' +
+          '<td class="py-3 px-3">' +
+            '<span class="px-2 py-0.5 rounded text-[10px] bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 font-mono">' +
+              tck.channel +
+            '</span>' +
+          '</td>' +
+          '<td class="py-3 px-3 text-center font-mono font-bold ' + durationColor + '">' + tck.duration + '</td>' +
+          '<td class="py-3 px-3 text-center font-mono font-bold ' + qaColor + '">' + tck.qa + '</td>' +
+          '<td class="py-3 px-3 text-center">' +
+            '<span class="px-2 py-0.5 rounded-full text-[9px] font-mono font-semibold ' + behaviorBadge + '">' +
+              tck.behavior +
+            '</span>' +
+          '</td>' +
+          '<td class="py-3 px-3 text-right">' +
+            '<button onclick="inspectTicket(\'' + tck.id + '\')" class="text-[11px] font-semibold text-sky-600 dark:text-sky-400 hover:underline">' +
+              'Audit &rarr;' +
+            '</button>' +
+          '</td>';
+        row.addEventListener('click',function(e){if(!e.target.closest('button'))openTicket38(tck.id)});
+        tbody.appendChild(row);
+      }
+    }
+
+    function openPersonModal(key) {
+      closeNumi38();
+      const data = STATE.dossiers[key];
+      if (!data) return;
+      STATE.activeDossierKey = key;
+      highlightSelectedProfile47(key);
+
+      document.getElementById('dossier-name').textContent = data.name;
+      document.getElementById('dossier-title').textContent = data.title;
+      document.getElementById('dossier-assigned').textContent = 'Reports to: ' + data.assigned;
+      document.getElementById('dossier-photo').src = data.photo;
+      document.getElementById('dossier-note-text').textContent = data.note;
+      document.getElementById('dossier-perf-val').textContent = data.perf;
+      document.getElementById('dossier-qa-val').textContent = data.qa;
+      document.getElementById('dossier-ai-tag').textContent = data.aiTag;
+      document.getElementById('dossier-ai-analysis').textContent = data.aiAnalysis;
+      document.getElementById('dossier-chart-delta').textContent = data.chartDelta;
+
+      // History entries list
+      const historyList = document.getElementById('dossier-history-list');
+      historyList.innerHTML = '';
+      for (let i = 0; i < data.history.length; i++) {
+        const h = data.history[i];
+        const div = document.createElement('div');
+        div.className = 'p-2 rounded-xl bg-slate-50 dark:bg-white/[0.04] border border-slate-200/80 dark:border-white/5 text-xs';
+        div.innerHTML = '<div class="flex items-center justify-between text-[9px] font-mono text-sky-600 dark:text-sky-400">' +
+            '<span>' + h.date + '</span>' +
+            '<span class="font-bold">Operations Note</span>' +
+          '</div>' +
+          '<p class="text-slate-700 dark:text-slate-300 text-[11px] mt-0.5">' + h.text + '</p>';
+        historyList.appendChild(div);
+      }
+      document.getElementById('dossier-log-count').textContent = data.history.length + ' Sessions';
+
+      // Comparative KPI Breakdown
+      const kpiGrid = document.getElementById('dossier-kpi-subgrid');
+      kpiGrid.innerHTML = '';
+      for (let j = 0; j < data.kpis.length; j++) {
+        const k = data.kpis[j];
+        const box = document.createElement('div');
+        box.className = 'clickable-kpi39 p-2 rounded-xl bg-slate-50 dark:bg-white/[0.04] border border-slate-200/80 dark:border-white/5 font-mono';box.onclick=(function(idx){return function(){A39.profile.current=(data.trendCurrent||[88,89,90,91,92,93,94]).map(function(v){return v+idx*.4});render39('profile');document.getElementById('analytics39-profile').scrollTo({top:0,behavior:'smooth'});};})(j);
+        const deltaClass = k.good ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400 font-bold';
+        box.innerHTML = '<div class="text-[9px] text-slate-500">' + k.label + '</div>' +
+          '<div class="text-xs font-bold text-slate-900 dark:text-white mt-0.5">' + k.val + '</div>' +
+          '<div class="text-[9px] ' + deltaClass + ' mt-0.5">' + k.delta + '</div>';
+        kpiGrid.appendChild(box);
+      }
+
+      // Render the 4-week historical comparison chart
+      renderDossierHistoryChart(data);
+      A39.profile.current=data.trendCurrent||[88,89,90,91,92,93,94];render39('profile');
+
+      const modal = document.getElementById('person-dossier-modal');
+      if (modal) modal.classList.remove('hidden');
+      playChime(520);
+    }
+
+    function renderDossierHistoryChart(data) {
+      const canvas = document.getElementById('dossierHistoryChart');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (dossierChartInstance) dossierChartInstance.destroy();
+
+      const isD = STATE.isDark;
+      const textColor = isD ? '#94a3b8' : '#64748b';
+      const gridColor = isD ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
+
+      dossierChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['W-4', 'W-3', 'W-2', 'W-1', 'D-3', 'D-2', 'Current'],
+          datasets: [
+            {
+              label: 'Current KPI Trend (%)',
+              data: data.trendCurrent || [90, 91, 92, 93, 94, 95, 96],
+              borderColor: '#0284c7',
+              backgroundColor: isD ? 'rgba(2, 132, 199, 0.15)' : 'rgba(2, 132, 199, 0.08)',
+              borderWidth: 2,
+              tension: 0.35,
+              fill: true,
+              pointRadius: 3
+            },
+            {
+              label: 'Previous Period Baseline',
+              data: data.trendPast || [88, 89, 90, 90.5, 91, 91.5, 92],
+              borderColor: isD ? '#64748b' : '#94a3b8',
+              borderDash: [3, 3],
+              borderWidth: 1.5,
+              tension: 0.35,
+              fill: false,
+              pointRadius: 0
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: { color: textColor, font: { family: 'Inter', size: 10 } }
+            }
+          },
+          scales: {
+            x: { grid: { color: gridColor }, ticks: { color: textColor, font: { family: 'JetBrains Mono', size: 9 } } },
+            y: { grid: { color: gridColor }, ticks: { color: textColor, font: { family: 'JetBrains Mono', size: 9 } } }
+          }
+        }
+      });
+    }
+
+    function closePersonModal() {
+      closeNumi38();
+      const modal = document.getElementById('person-dossier-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function addDossierNote() {
+      const input = document.getElementById('dossier-new-note');
+      if (!input) return;
+      const text = input.value.trim();
+      if (!text) return;
+
+      const current = STATE.dossiers[STATE.activeDossierKey];
+      if (current) {
+        current.history.unshift({ date: "Just now (Logged)", text: text });
+        openPersonModal(STATE.activeDossierKey);
+        input.value = '';
+        showToast("Coaching entry appended to operational notes.", "success");
+      }
+    }
+
+    function initTreePanAndZoom() {
+      const viewport = document.getElementById('tree-viewport');
+      const container = document.getElementById('tree-container');
+      if (!viewport || !container) return;
+
+      viewport.addEventListener('mousedown', function(e) {
+        if (e.target.closest('.cursor-pointer')) return;
+        STATE.isPanning = true;
+        STATE.panStartX = e.clientX - STATE.treePanX;
+        STATE.panStartY = e.clientY - STATE.treePanY;
+        viewport.style.cursor = 'grabbing';
+      });
+
+      window.addEventListener('mousemove', function(e) {
+        if (!STATE.isPanning) return;
+        STATE.treePanX = e.clientX - STATE.panStartX;
+        STATE.treePanY = e.clientY - STATE.panStartY;
+        applyTreeTransform();
+      });
+
+      window.addEventListener('mouseup', function() {
+        if (STATE.isPanning) {
+          STATE.isPanning = false;
+          viewport.style.cursor = 'grab';
+        }
+      });
+
+      viewport.addEventListener('wheel', function(e) {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? -0.1 : 0.1;
+        zoomTree(delta);
+      }, { passive: false });
+    }
+
+    function zoomTree(delta) {
+      STATE.treeZoom = Math.min(Math.max(0.4, STATE.treeZoom + delta), 2.2);
+      applyTreeTransform();
+      const label = document.getElementById('tree-zoom-label');
+      if (label) label.textContent = Math.round(STATE.treeZoom * 100) + '%';
+    }
+
+    function resetTreeTransform() {
+      STATE.treeZoom = 1;
+      STATE.treePanX = 0;
+      STATE.treePanY = 0;
+      applyTreeTransform();
+      const label = document.getElementById('tree-zoom-label');
+      if (label) label.textContent = "100%";
+      showToast("Canvas viewport reset", "info");
+    }
+
+    function applyTreeTransform() {
+      const container = document.getElementById('tree-container');
+      if (container) {
+        container.style.transform = 'translate(calc(-50% + ' + STATE.treePanX + 'px), ' + STATE.treePanY + 'px) scale(' + STATE.treeZoom + ')';
+      }
+    }
+
+    function switchMainScreen(screenId) {
+      if (STATE.activeScreen === screenId) { syncNav47(screenId); return; }
+      STATE.activeScreen = screenId;
+      const panels = document.querySelectorAll('.screen-panel');
+      for (let i = 0; i < panels.length; i++) {
+        panels[i].classList.add('hidden');
+      }
+
+      const target = document.getElementById(screenId);
+      if (target) target.classList.remove('hidden');
+
+      const navButtons = {
+        'screen-tickets': 'nav-btn-tickets',
+        'screen-overview': 'nav-btn-overview',
+        'screen-tree': 'nav-btn-tree'
+      };
+
+      const keys = Object.keys(navButtons);
+      for (let j = 0; j < keys.length; j++) {
+        const btnId = navButtons[keys[j]];
+        const btn = document.getElementById(btnId);
+        if (btn) {
+          btn.classList.remove('bg-white', 'dark:bg-white', 'text-slate-900', 'dark:text-slate-950', 'shadow-sm', 'font-bold');
+          btn.classList.add('text-slate-600', 'dark:text-slate-400');
+        }
+      }
+
+      const activeBtn = document.getElementById(navButtons[screenId]);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-slate-600', 'dark:text-slate-400');
+        activeBtn.classList.add('bg-white', 'dark:bg-white', 'text-slate-900', 'dark:text-slate-950', 'shadow-sm', 'font-bold');
+      }
+
+      if (screenId === 'screen-overview') {
+        setTimeout(initOverviewCharts, 50);
+      }
+      syncNav47(screenId);
+      playChime(440);
+    }
+
+    function openMetricDrillDown(metric) {
+      closeNumi38();
+      const modal = document.getElementById('kpi-drilldown-modal');
+      const title = document.getElementById('drilldown-title');
+      const explanation = document.getElementById('drilldown-explanation');
+      const badge = document.getElementById('drilldown-badge');
+
+      if (!modal) return;
+      title.textContent = metric + ' Historical Analysis & Root-Cause Forensic';
+
+      if (metric === 'AHT') {
+        badge.textContent = 'ANOMALY DETECTED';
+        badge.className = 'px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-500/30';
+        explanation.innerHTML = '<p><strong>1. Diagnosis:</strong> Floor AHT reached <strong>372s</strong> (+24s above the 348s benchmark). SQL telemetry verifies that <strong>Team Falcon (TL Sarah Mansour)</strong> generated 68% of total variance due to complex billing verification hold times.</p>' +
+          '<p><strong>2. Statistical Significance:</strong> <em>Confirmed Anomaly.</em> Current variance sits at <strong>+6.8% above upper control limit</strong>.</p>' +
+          '<p><strong>3. Corrective Operational Action:</strong> Provide TL Sarah with the revised router billing flowchart; co-pilot 3 flagged representatives on call hold etiquette immediately.</p>';
+      } else if (metric === 'SLA') {
+        badge.textContent = 'CONTRACT COMPLIANT';
+        badge.className = 'px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30';
+        explanation.innerHTML = '<p><strong>1. Diagnosis:</strong> Account SLA is operating at <strong>88.4%</strong> answered within 20 seconds, exceeding contractual commitment of 85.0% by +3.4%.</p>' +
+          '<p><strong>2. Trend Analysis:</strong> Digital response queues maintained 95.4% SLA while voice maintained 87.8%.</p>';
+      } else if (metric === 'CSAT') {
+        badge.textContent = 'WORLD-CLASS CSAT';
+        badge.className = 'px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/30';
+        explanation.innerHTML = '<p><strong>1. Diagnosis:</strong> Floor CSAT registered at <strong>91.2%</strong> (+1.6% DoD). Survey completion rate is 18.4%.</p>' +
+          '<p><strong>2. Key Driver:</strong> Rapid Chat pod (TL Omar Khaled) delivered 93.8% positive sentiment on billing troubleshooting.</p>';
+      } else {
+        badge.textContent = 'STEADY TRAJECTORY';
+        badge.className = 'px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-sky-100 dark:bg-sky-500/20 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-500/30';
+        explanation.innerHTML = '<p><strong>1. Diagnosis:</strong> Metric variance is within nominal boundary limits (&plusmn;1.1 standard deviations).</p>' +
+          '<p><strong>2. Forecast:</strong> Pacing indicates full monthly milestone delivery.</p>';
+      }
+
+      modal.classList.remove('hidden');
+      setTimeout(function(){ renderDrillDownChart(metric); A39.metric.current=metric==='AHT'?[345,350,352,358,362,368,372]:metric==='SLA'?[84.8,85.6,86.2,86.9,87.4,88.0,88.4]:metric==='CSAT'?[88.1,88.8,89.3,89.9,90.4,90.8,91.2]:[82,84,85,86,87,88,89]; render39('metric'); },40);
+    }
+
+    function renderDrillDownChart(metric) {
+      const canvas = document.getElementById('drillDownHistoryCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (drillDownChartInstance) drillDownChartInstance.destroy();
+
+      const isD = STATE.isDark;
+      const textColor = isD ? '#94a3b8' : '#64748b';
+      const gridColor = isD ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
+
+      drillDownChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Today'],
+          datasets: [
+            {
+              label: 'Current Week Pace',
+              data: metric === 'AHT' ? [345, 350, 352, 358, 362, 368, 372] : [87, 88, 89, 90, 90.5, 91, 91.2],
+              borderColor: '#0284c7',
+              backgroundColor: isD ? 'rgba(2, 132, 199, 0.15)' : 'rgba(2, 132, 199, 0.08)',
+              tension: 0.35,
+              fill: true,
+              borderWidth: 2
+            },
+            {
+              label: 'Prior Baseline Target',
+              data: metric === 'AHT' ? [340, 342, 345, 344, 348, 350, 348] : [85, 86, 87, 87.5, 88, 88, 88.5],
+              borderColor: isD ? '#64748b' : '#94a3b8',
+              borderDash: [4, 4],
+              tension: 0.35,
+              fill: false,
+              borderWidth: 1.5
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'top', labels: { color: textColor, font: { family: 'Inter', size: 10 } } } },
+          scales: {
+            x: { grid: { color: gridColor }, ticks: { color: textColor, font: { family: 'JetBrains Mono', size: 9 } } },
+            y: { grid: { color: gridColor }, ticks: { color: textColor, font: { family: 'JetBrains Mono', size: 9 } } }
+          }
+        }
+      });
+    }
+
+    function closeMetricDrillDown() {
+      closeNumi38();
+      const modal = document.getElementById('kpi-drilldown-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function toggleStreamSimulation() {
+      const btnText = document.getElementById('pause-stream-text');
+      const btnIcon = document.getElementById('pause-stream-icon');
+
+      if (!STATE.streamPaused) {
+        clearInterval(STATE.streamTimer);
+        STATE.streamPaused = true;
+        if (btnText) btnText.textContent = "Resume Feed";
+        if (btnIcon) btnIcon.className = "fa-solid fa-play text-[10px]";
+        showToast("Live ingestion stream paused.", "info");
+      } else {
+        startStreamSimulation();
+        STATE.streamPaused = false;
+        if (btnText) btnText.textContent = "Pause Feed";
+        if (btnIcon) btnIcon.className = "fa-solid fa-pause text-[10px]";
+        showToast("Live ingestion stream active.", "success");
+      }
+    }
+
+    function startStreamSimulation() {
+      STATE.streamTimer = setInterval(function() {
+        const pool = [
+          { name: "Karim Adel", photo: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&auto=format&fit=crop&q=80", leader: "Ahmed Hassan", channel: "Live Chat" },
+          { name: "Mariam Youssef", photo: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&auto=format&fit=crop&q=80", leader: "Sarah Mansour", channel: "Voice" },
+          { name: "Ziad Mostafa", photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&auto=format&fit=crop&q=80", leader: "Ahmed Hassan", channel: "Voice" },
+          { name: "Heba Tarek", photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&auto=format&fit=crop&q=80", leader: "Omar Khaled", channel: "Live Chat" }
+        ];
+        const pick = pool[Math.floor(Math.random() * pool.length)];
+        const randomNum = Math.floor(Math.random() * 899) + 100;
+        const dur = Math.floor(Math.random() * 180) + 260;
+        const isSpike = dur > 400;
+
+        const newTck = {
+          id: '#TCK-9' + randomNum,
+          agent: pick.name,
+          photo: pick.photo,
+          leader: pick.leader,
+          channel: pick.channel,
+          duration: dur + 's',
+          qa: (Math.floor(Math.random() * 14) + 86) + '%',
+          alert: isSpike,
+          behavior: isSpike ? "Hold Variance" : "Optimal Flow"
+        };
+
+        STATE.tickets.unshift(newTck);
+        if (STATE.tickets.length > 15) STATE.tickets.pop();
+        renderTicketsTable();
+
+        STATE.ticketsVolume += 1;
+      }, 8000);
+    }
+
+    function applyTicketFilter() {
+      const input = document.getElementById('ticket-filter-input');
+      const q = input ? input.value.toLowerCase() : '';
+      const select = document.getElementById('channel-filter-select');
+      const ch = select ? select.value : 'all';
+      const rows = document.querySelectorAll('#tickets-table-body tr');
+
+      for (let i = 0; i < rows.length; i++) {
+        const r = rows[i];
+        const text = r.innerText.toLowerCase();
+        const matchQ = !q || text.indexOf(q) !== -1;
+        const matchCh = (ch === 'all') || text.indexOf(ch.toLowerCase()) !== -1;
+        r.style.display = (matchQ && matchCh) ? '' : 'none';
+      }
+    }
+
+    function inspectTicket(id) {
+      showToast('Inspecting interaction transcript for ' + id, 'info');
+      openMetricDrillDown('AHT');
+    }
+
+    function toggleAlertsDrawer() {
+      const popover = document.getElementById('alerts-popover');
+      if (popover) popover.classList.toggle('hidden');
+    }
+
+    function dismissAllAlerts() {
+      toggleAlertsDrawer();
+      showToast("Priority floor alerts acknowledged by OM Bahaa.", "success");
+    }
+
+    function toggleTheme() {
+      STATE.isDark = !STATE.isDark;
+      const html = document.documentElement;
+      const themeIcon = document.getElementById('theme-toggle-icon');
+
+      if (STATE.isDark) {
+        html.classList.add('dark');
+        html.classList.remove('light');
+        if (themeIcon) themeIcon.className = "fa-solid fa-sun text-xs text-amber-400";
+        showToast("Switched to Dark Theme", "info");
+      } else {
+        html.classList.remove('dark');
+        html.classList.add('light');
+        if (themeIcon) themeIcon.className = "fa-solid fa-moon text-xs text-slate-700";
+        showToast("Switched to Apple Light Minimalist Theme", "info");
+      }
+
+      initOverviewCharts();
+      if (STATE.activeDossierKey) {
+        const data = STATE.dossiers[STATE.activeDossierKey];
+        if (data) renderDossierHistoryChart(data);
+      }
+    }
+
+    function triggerFastExport() {
+      if (!document.getElementById('person-dossier-modal').classList.contains('hidden')) return printV41('person-dossier-modal');
+      if (!document.getElementById('kpi-drilldown-modal').classList.contains('hidden')) return printV41('kpi-drilldown-modal');
+      if (!document.getElementById('ticket-quality38').classList.contains('hidden')) return printV41('ticket-quality38');
+      return printScreenV41(STATE.activeScreen);
+    }
+    function exportSingleDossier() { printV41('person-dossier-modal'); }
+    function triggerDataSync() {
+      const icon = document.getElementById('top-sync-icon');
+      if (icon) icon.classList.add('fa-spin');
+      showToast("Syncing with PostgreSQL VPS Engine...", "info");
+
+      setTimeout(function() {
+        if (icon) icon.classList.remove('fa-spin');
+        STATE.ticketsVolume += Math.floor(Math.random() * 4) + 1;
+        showToast("Sync Complete: Telemetry refreshed from VPS.", "success");
+        playChime(580);
+      }, 700);
+    }
+
+    // Toast Notification Builder
+    function showToast(msg, type) {
+      type = type || 'info';
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      const isD = STATE.isDark;
+      const styleClasses = (type === 'success') 
+        ? (isD ? 'bg-emerald-950/90 border-emerald-500/50 text-emerald-200' : 'bg-emerald-50 border-emerald-300 text-emerald-800 shadow-md')
+        : (isD ? 'bg-[#0e121a]/95 border-sky-500/50 text-slate-200' : 'bg-white border-slate-200 text-slate-800 shadow-md');
+
+      toast.className = 'p-3 rounded-xl border shadow-lg flex items-center space-x-2 text-xs pointer-events-auto transform translate-y-2 opacity-0 transition-all duration-200 max-w-sm ' + styleClasses;
+      const iconClass = type === 'success' ? 'fa-circle-check text-emerald-500' : 'fa-bell text-sky-500';
+      toast.innerHTML = '<i class="fa-solid ' + iconClass + ' text-xs"></i><span>' + msg + '</span>';
+      container.appendChild(toast);
+
+      setTimeout(function() {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      }, 10);
+      setTimeout(function() {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(function() { toast.remove(); }, 250);
+      }, 3200);
+    }
+
+    // Audio chime feedback using Web Audio API
+    function playChime(freq) {
+      freq = freq || 480;
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        const ctx = new AudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(0.015, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.08);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.09);
+      } catch (e) {}
+    }
+
+
+    function animateDemoTelemetry(){
+      const floor=document.getElementById('staffed-floor-value');
+      if(floor){const active=14+Math.floor(Math.random()*3);floor.textContent=active+' / 18 Agents Active';}
+      const values=document.querySelectorAll('#screen-overview .font-mono.font-bold');
+      values.forEach(el=>{el.style.transition='transform .28s ease, opacity .28s ease';});
+    }
+    setInterval(animateDemoTelemetry,6000);
+    window.onload = function() {
+      initOverviewCharts();
+      renderTicketsTable();
+      initTreePanAndZoom();
+      startStreamSimulation();
+      syncNav47(STATE.activeScreen);
+    };
+  </script>
+</body>
+</html>
